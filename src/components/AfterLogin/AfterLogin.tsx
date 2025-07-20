@@ -56,7 +56,7 @@ export function AfterLogin() {
         <Heading size={'md'}>{nextPeriod}限（{TIMETABLE.get(nextPeriod)}）</Heading>
         <Heading size={'lg'}>「{nextClassInfoObject.className}」</Heading>
         <Heading size={'xl'}>@{nextClassInfoObject.room}</Heading>
-        <Heading size={'sm'} color="gray.500">欠席数は{abcenceCount}/4ですよ！</Heading>
+        <Heading size={'sm'} color="gray.500">欠席数は{abcenceCount}/3.5ですよ！</Heading>
 
         {nextClassInfoObject.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}
         {nextClassInfoObject.isClassOpen
