@@ -34,7 +34,7 @@ export function AfterLogin() {
   * また、updateInfo関数では、現在時刻から次の授業の時限の取得、次の授業の各情報の取得、次の授業の欠席回数の取得を行う。
   */
   useEffect(() => {
-    async function updateInfo() {
+    async function updateInfo(): Promise<void> {
       const currentDate = new Date().toDateString()
 
       if (refDate !== undefined && currentDate !== refDate) {

@@ -24,7 +24,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   * 学内ポータルの認証クッキーを取得できたら、現在時刻を取得しrefHourに格納。
   * さらに、shouldSaveがtrueの場合、localStorageに認証情報を保存。
   */
-  async function login(userCredentials: User, shouldSave = false) {
+  async function login(userCredentials: User, shouldSave = false): Promise<void> {
     const success = await getAuthCookie(userCredentials)
 
     if (success) {
@@ -48,7 +48,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   /**
   * 認証情報を各所から削除。
   */
-  function logout() {
+  function logout(): void {
     clearAuthCookie();
     setRefHour(undefined);
 

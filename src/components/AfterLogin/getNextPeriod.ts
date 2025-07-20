@@ -3,7 +3,7 @@ import type { Schedule } from "./getSchedule";
 /**
  * 現在時刻とスケジュールから次の授業の時限を取得する。
  */
-export async function getNextPeriod(schedule: Schedule) {
+export async function getNextPeriod(schedule: Schedule): Promise<number> {
   const now = new Date();
   const minutes = now.getHours() * 60 + now.getMinutes();
 

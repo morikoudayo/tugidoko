@@ -24,7 +24,7 @@ function extractClassInfoText(classInfo: Element): string {
 /**
  * スケジュール情報を学内ポータルから取得してパースする
  */
-export async function getSchedule() {
+export async function getSchedule(): Promise<Schedule> {
   const response = await fetch('/campusweb/portal.do?page=main')
   const html = await response.text()
 
