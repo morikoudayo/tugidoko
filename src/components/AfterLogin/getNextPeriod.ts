@@ -2,6 +2,7 @@ import type { Schedule } from "./getSchedule";
 
 /**
  * 現在時刻とスケジュールから次の授業の時限を取得する。
+ * 次の授業が存在しない場合、8を返す。
  */
 export async function getNextPeriod(schedule: Schedule): Promise<number> {
   const now = new Date();

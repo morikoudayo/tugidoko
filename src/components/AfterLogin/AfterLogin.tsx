@@ -30,7 +30,7 @@ export function AfterLogin() {
 
   /**
   * 1分ごとにupdateInfo関数が実行される。
-  * updateInfo関数では、前回スケジュールを取得した日時から、日にち（dd）が変更された場合にのみスケジュールを取得する。
+  * getScheduleおよびsetScheduleは日付が変更された場合のみ実行される。
   * また、updateInfo関数では、現在時刻から次の授業の時限の取得、次の授業の各情報の取得、次の授業の欠席回数の取得を行う。
   */
   useEffect(() => {
@@ -65,7 +65,7 @@ export function AfterLogin() {
         <Heading size={'lg'}>「{nextClassInfoObject.className}」</Heading>
         <Heading size={'xl'}>@{nextClassInfoObject.room}</Heading>
         { /**
-          * 神奈川大学では、4欠席で落単となる。
+          * 神奈川大学では、4欠席で落単となるため、3.5欠席が上限である。
           */ }
         <Heading size={'sm'} color="gray.500">欠席数は{abcenceCount}/3.5ですよ！</Heading>
 

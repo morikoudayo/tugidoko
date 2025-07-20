@@ -1,7 +1,7 @@
 import { parseHTML, type ClassInfo } from "./getSchedule";
 
 /**
- * 次の授業の欠席回数を学内ポータルから取得する
+ * classInfoObject.classNameと授業名が一致する授業の欠席回数を学内ポータルから取得する
  */
 export async function getAbsenceCount(classInfoObject: ClassInfo | undefined): Promise<number> {
   if (classInfoObject === undefined) {
