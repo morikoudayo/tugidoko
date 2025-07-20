@@ -31,7 +31,6 @@ export async function getSchedule() {
   const schedule:Schedule = new Map();
   classInfoList!.forEach(classInfo => {
     const classInfoText = extractClassInfoText(classInfo)
-    console.log(classInfoText)
 
     const regex = /^([^:]+):(.*)@([^@]+)$/;
     const match = classInfoText.match(regex);
@@ -62,7 +61,6 @@ export async function getSchedule() {
         isMakeupClass: isMakeupClass,
       };
 
-      console.log(classInfoObject)
       schedule.set(period, classInfoObject)
     }
   });
