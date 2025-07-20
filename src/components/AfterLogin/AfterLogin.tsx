@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/hook/useAuth';
 import { Button, Center, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { getSchedule, type ClassInfo, type Schedule } from './getSchedule';
-import { getNextPeriod } from './getNextPeriod';
+import { getNextPeriod, NO_CLASS_ANYMORE } from './getNextPeriod';
 import { getAbsenceCount } from './getAbsenceCount';
 
 /**
@@ -87,7 +87,7 @@ export function AfterLogin() {
           <Spinner size="xl" />
           <Text>Loading...</Text>
         </VStack>)}
-        {nextPeriod === 8 && (<>
+        {nextPeriod === NO_CLASS_ANYMORE && (<>
           <Heading size={'md'}>今日の授業はこれで終わりです！</Heading>
           <Heading size={'md'}>お疲れ様でした！</Heading>
         </>)}

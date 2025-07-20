@@ -1,8 +1,10 @@
 import type { Schedule } from "./getSchedule";
 
+export const NO_CLASS_ANYMORE = 8;
+
 /**
  * 現在時刻とスケジュールから次の授業の時限を取得する。
- * 次の授業が存在しない場合、8を返す。
+ * 次の授業が存在しない場合、NO_CLASS_ANYMORE (8)を返す。
  */
 export async function getNextPeriod(schedule: Schedule): Promise<number> {
   const now = new Date();
@@ -24,7 +26,7 @@ export async function getNextPeriod(schedule: Schedule): Promise<number> {
   } else if (minutes < 21 * 60 + 15) {
     nextPeriod = 7
   } else {
-    nextPeriod = 8
+    nextPeriod = NO_CLASS_ANYMORE
   }
 
   for (; nextPeriod < 8; nextPeriod++) {
