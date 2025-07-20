@@ -5,6 +5,9 @@ import { getSchedule, type ClassInfo, type Schedule } from './getSchedule';
 import { getNextPeriod } from './getNextPeriod';
 import { getAbsenceCount } from './getAbsenceCount';
 
+/**
+* 神奈川大学の時間割。
+*/
 const TIMETABLE = new Map([
   [1, "09:00 ~ 10:40"],
   [2, "10:50 ~ 12:30"],
@@ -25,6 +28,11 @@ export function AfterLogin() {
   const [nextPeriod, setNextPeriod] = useState<number>(0)
   const [abcenceCount, setAbcenceCount] = useState<number>(0)
 
+  /**
+  * 1分ごとにupdateInfo関数が実行される。
+  * updateInfo関数では、前回スケジュールを取得した日時から、日にち（dd）が変更された場合にのみスケジュールを取得する。
+  * また、updateInfo関数では、現在時刻から次の授業の時限の取得、次の授業の各情報の取得、次の授業の欠席回数の取得を行う。
+  */
   useEffect(() => {
     async function updateInfo() {
       const currentDate = new Date().toDateString()
@@ -56,6 +64,9 @@ export function AfterLogin() {
         <Heading size={'md'}>{nextPeriod}限（{TIMETABLE.get(nextPeriod)}）</Heading>
         <Heading size={'lg'}>「{nextClassInfoObject.className}」</Heading>
         <Heading size={'xl'}>@{nextClassInfoObject.room}</Heading>
+        { /**
+          * 神奈川大学では、4欠席で落単となる。
+          */ }
         <Heading size={'sm'} color="gray.500">欠席数は{abcenceCount}/3.5ですよ！</Heading>
 
         {nextClassInfoObject.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}

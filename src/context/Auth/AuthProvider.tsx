@@ -13,10 +13,17 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(EMPTY_USER);
   const [refHour, setRefHour] = useState<string | undefined>(undefined)
 
+  /**
+  * ページ読み込み時に一度だけ、ローカルストレージから認証情報を取得。
+  */
   useEffect(() => {
     setUser(loadUserCredentials());
   }, []);
 
+  /**
+  * 学内ポータルの認証クッキーを取得できたら、現在時刻を取得しrefHourに格納。
+  * さらに、shouldSaveがtrueの場合、localStorageに認証情報を保存。
+  */
   async function login(userCredentials: User, shouldSave = false) {
     const success = await getAuthCookie(userCredentials)
 
@@ -38,6 +45,9 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  /**
+  * 認証情報を各所から削除。
+  */
   function logout() {
     clearAuthCookie();
     setRefHour(undefined);
@@ -46,6 +56,11 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     setUser(EMPTY_USER);
   }
 
+  /**
+  * 1分ごとにautoLogin関数が実行される。
+  * autoLogin関数では、前回ログイン時刻から時間（hh）が変更された場合にのみログイン処理を実行する。
+  * これにより60分で失効する学内ポータルの認証Cookieを自動的に更新する。
+  */
   useEffect(() => {
     async function autoLogin() {
       const currentHour = new Date().getHours().toString();
@@ -66,6 +81,9 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(intervalId);
   }, [user, refHour]);
 
+  /**
+  * 以下はproviderの定義。
+  */
   const contextValue: AuthContextType = {
     user,
     login,

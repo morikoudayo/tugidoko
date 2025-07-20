@@ -21,6 +21,9 @@ function extractClassInfoText(classInfo: Element): string {
     .replace(/【.*?】/, '');
 }
 
+/**
+ * スケジュール情報を学内ポータルから取得してパースする
+ */
 export async function getSchedule() {
   const response = await fetch('/campusweb/portal.do?page=main')
   const html = await response.text()

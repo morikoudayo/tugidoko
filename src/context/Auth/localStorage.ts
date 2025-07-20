@@ -1,5 +1,10 @@
 import type { User } from "./AuthContext";
 
+/**
+ * ローカルストレージから認証情報を取得。
+ * 平文で保存しているため取り扱いには注意。
+ * Googleアカウントによる保護も検討。
+ */
 export function loadUserCredentials() {
   const savedId = localStorage.getItem('id');
   const savedPass = localStorage.getItem('pass');
@@ -17,6 +22,9 @@ export function loadUserCredentials() {
   return userCredentials
 }
 
+/**
+ * ローカルストレージの認証情報をクリア。
+ */
 export function clearUserCredentials() {
   localStorage.setItem('id', '');
   localStorage.setItem('pass', '');
