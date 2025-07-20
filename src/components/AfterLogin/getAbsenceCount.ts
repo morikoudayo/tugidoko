@@ -27,7 +27,7 @@ export async function getAbsenceCount(classInfoObject: ClassInfo | undefined): P
 
       if (match) {
         const attendanceArray = match[0].split('/')
-        return Number(attendanceArray[2]) * 0.5 + Number(attendanceArray[3])
+        return Number(attendanceArray[2]) * 0.5 + Number(attendanceArray[3]) //欠席を1、遅刻を0.5として欠席数を計算。
       }
     }
   }
