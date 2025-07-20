@@ -25,7 +25,7 @@ export function AfterLogin() {
   const [refDate, setRefDate] = useState<string | undefined>(undefined)
 
   const [nextClassInfoObject, setNextClassInfoObject] = useState<ClassInfo>()
-  const [nextPeriod, setNextPeriod] = useState<number>(0)
+  const [nextPeriod, setNextPeriod] = useState<number | undefined>(undefined)
   const [abcenceCount, setAbcenceCount] = useState<number>(0)
 
   /**
@@ -43,7 +43,7 @@ export function AfterLogin() {
       }
 
       setNextPeriod(await getNextPeriod(schedule))
-      setNextClassInfoObject(schedule.get(nextPeriod))
+      setNextClassInfoObject(schedule.get(nextPeriod!))
       setAbcenceCount(await getAbsenceCount(nextClassInfoObject))
     }
 
@@ -59,7 +59,7 @@ export function AfterLogin() {
 
   return (
     <Center h='100vh' flexDirection="column" alignItems="center" mx={4}>
-      {nextClassInfoObject ? (<>
+      {nextPeriod && nextClassInfoObject ? (<>
         <Heading size={'md'}>次の授業は</Heading>
         <Heading size={'md'}>{nextPeriod}限（{TIMETABLE.get(nextPeriod)}）</Heading>
         <Heading size={'lg'}>「{nextClassInfoObject.className}」</Heading>
@@ -83,7 +83,7 @@ export function AfterLogin() {
         </>)}
 
       </>) : (<>
-        {nextPeriod === 0 && (<VStack>
+        {nextPeriod === undefined && (<VStack>
           <Spinner size="xl" />
           <Text>Loading...</Text>
         </VStack>)}
