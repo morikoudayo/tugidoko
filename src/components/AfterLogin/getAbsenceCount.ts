@@ -1,4 +1,4 @@
-import type { ClassInfo } from "./getSchedule";
+import { parseHTML, type ClassInfo } from "./getSchedule";
 
 export async function getAbsenceCount(classInfoObject: ClassInfo | undefined) {
   if (classInfoObject === undefined) {
@@ -8,8 +8,7 @@ export async function getAbsenceCount(classInfoObject: ClassInfo | undefined) {
   const response = await fetch('/campusweb/campussquare.do?_flowId=AAW0001000-flow&link=menu-link-mf-135117')
   const html = await response.text()
 
-  const parser = new DOMParser();
-  const document = parser.parseFromString(html, 'text/html');
+  const document = parseHTML(html)
 
   const currentMonth = new Date().getMonth();
   const index =  3 <= currentMonth && currentMonth <= 8 ? -1 : -2;
