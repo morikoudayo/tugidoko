@@ -37,14 +37,21 @@ export function AfterLogin() {
     async function updateInfo(): Promise<void> {
       const currentDate = new Date().toDateString()
 
-      if (refDate !== undefined && currentDate !== refDate) {
-        setSchedule(await getSchedule())
+      let updatedSchedule = schedule 
+      if (refDate == undefined || currentDate !== refDate) {
+        updatedSchedule = await getSchedule()
+
+        setSchedule(updatedSchedule)
         setRefDate(currentDate);
       }
 
-      setNextPeriod(await getNextPeriod(schedule))
-      setNextClassInfoObject(schedule.get(nextPeriod!))
-      setAbcenceCount(await getAbsenceCount(nextClassInfoObject))
+      const calculatedNextPeriod = await getNextPeriod(updatedSchedule)
+      const currentNextClassInfoObject = updatedSchedule.get(calculatedNextPeriod)
+      const fetchedAbsenceCount = await getAbsenceCount(currentNextClassInfoObject)
+
+      setNextPeriod(calculatedNextPeriod)
+      setNextClassInfoObject(currentNextClassInfoObject)
+      setAbcenceCount(fetchedAbsenceCount)
     }
 
     updateInfo();
