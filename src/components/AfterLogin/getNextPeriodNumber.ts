@@ -1,10 +1,10 @@
 import type { Schedule } from "./getSchedule";
 
-export const NO_MORE_CLASSES_TODAY = 8;
+export const NO_MORE_CLASSES = 8;
 
 /**
  * 現在時刻とスケジュールから次の授業の時限を取得する。
- * 次の授業が存在しない場合、NO_MORE_CLASSES_TODAY (8)を返す。
+ * 次の授業が存在しない場合、NO_MORE_CLASSES (8)を返す。
  */
 export async function getNextPeriodNumber(schedule: Schedule): Promise<number> {
   const now = new Date();
@@ -26,7 +26,7 @@ export async function getNextPeriodNumber(schedule: Schedule): Promise<number> {
   } else if (minutes < 21 * 60 + 15) {
     nextPeriodNumber = 7
   } else {
-    nextPeriodNumber = NO_MORE_CLASSES_TODAY
+    nextPeriodNumber = NO_MORE_CLASSES
   }
 
   for (; nextPeriodNumber < 8; nextPeriodNumber++) {
