@@ -1,4 +1,4 @@
-export interface ClassInfo {
+export interface ClassData {
   className: string;
   room: string;
   isClassOpen: boolean;
@@ -6,15 +6,15 @@ export interface ClassInfo {
   isMakeupClass: boolean;
 }
 
-export type Schedule = Map<number, ClassInfo>;
+export type Schedule = Map<number, ClassData>;
 
 export function parseHTML(html: string): Document {
   const parser = new DOMParser();
   return parser.parseFromString(html, 'text/html');
 }
 
-function extractClassInfoText(classInfo: Element): string {
-  return classInfo.textContent!
+function extractClassDataContent(classElement: Element): string {
+  return classElement.textContent!
     .split('\n')
     .map(line => line.trim())
     .join('')
@@ -29,23 +29,24 @@ export async function getSchedule(): Promise<Schedule> {
   const html = await response.text()
 
   const document = parseHTML(html);
-  const classInfoList = document.querySelectorAll('ul.mysch-portlet-list li');
+  const classElements = document.querySelectorAll('ul.mysch-portlet-list li');
 
   const schedule:Schedule = new Map();
-  classInfoList!.forEach(classInfo => {
-    const classInfoText = extractClassInfoText(classInfo)
+  classElements.forEach(classElement => {
+    const classContent = extractClassDataContent(classElement)
 
     const regex = /^([^:]+):(.*)@([^@]+)$/;
-    const match = classInfoText.match(regex);
+    const match = classContent.match(regex);
 
     if (match) {
       const period = Number(match[1].replace('限', ''));
       const className = match[2];
       const room = match[3];
+      const classStatus = classElement.classList[0];
       let isClassOpen = true;
       let isRoomChanged = false;
       let isMakeupClass = false;
-      switch (classInfo.classList[0]) {
+      switch (classStatus) {
         case "kyoshitsu":
           isRoomChanged = true;
           break;
@@ -56,7 +57,7 @@ export async function getSchedule(): Promise<Schedule> {
           isClassOpen = false;
       }
 
-      const classInfoObject: ClassInfo = {
+      const classData: ClassData = {
         className: className,
         room: room,
         isClassOpen: isClassOpen,
@@ -64,7 +65,7 @@ export async function getSchedule(): Promise<Schedule> {
         isMakeupClass: isMakeupClass,
       };
 
-      schedule.set(period, classInfoObject)
+      schedule.set(period, classData)
     }
   });
 

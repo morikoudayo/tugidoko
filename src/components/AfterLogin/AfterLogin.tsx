@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hook/useAuth';
 import { Button, Center, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
-import { getSchedule, type ClassInfo, type Schedule } from './getSchedule';
-import { getNextPeriod, NO_CLASS_ANYMORE } from './getNextPeriod';
+import { getSchedule, type ClassData, type Schedule } from './getSchedule';
+import { getNextPeriodNumber, NO_MORE_CLASSES_TODAY } from './getNextPeriodNumber';
 import { getAbsenceCount } from './getAbsenceCount';
 
 /**
@@ -24,8 +24,8 @@ export function AfterLogin() {
   const [schedule, setSchedule] = useState<Schedule>(new Map())
   const [refDate, setRefDate] = useState<string | undefined>(undefined)
 
-  const [nextClassInfoObject, setNextClassInfoObject] = useState<ClassInfo>()
-  const [nextPeriod, setNextPeriod] = useState<number | undefined>(undefined)
+  const [classData, setClassData] = useState<ClassData>()
+  const [periodNumber, setPeriodNumber] = useState<number | undefined>(undefined)
   const [absenceCount, setAbsenceCount] = useState<number>(0)
 
   /**
@@ -37,21 +37,21 @@ export function AfterLogin() {
     async function updateInfo(): Promise<void> {
       const currentDate = new Date().toDateString()
 
-      let updatedSchedule = schedule 
+      let latestSchedule = schedule 
       if (refDate == undefined || currentDate !== refDate) {
-        updatedSchedule = await getSchedule()
+        latestSchedule = await getSchedule()
 
-        setSchedule(updatedSchedule)
+        setSchedule(latestSchedule)
         setRefDate(currentDate);
       }
 
-      const calculatedNextPeriod = await getNextPeriod(updatedSchedule)
-      const currentNextClassInfoObject = updatedSchedule.get(calculatedNextPeriod)
-      const fetchedAbsenceCount = await getAbsenceCount(currentNextClassInfoObject)
+      const nextPeriodNumber = await getNextPeriodNumber(latestSchedule)
+      const nextClassData = latestSchedule.get(nextPeriodNumber)
+      const absenceCountForNextClass = await getAbsenceCount(nextClassData)
 
-      setNextPeriod(calculatedNextPeriod)
-      setNextClassInfoObject(currentNextClassInfoObject)
-      setAbsenceCount(fetchedAbsenceCount)
+      setPeriodNumber(nextPeriodNumber)
+      setClassData(nextClassData)
+      setAbsenceCount(absenceCountForNextClass)
     }
 
     updateInfo();
@@ -66,35 +66,35 @@ export function AfterLogin() {
 
   return (
     <Center h='100vh' flexDirection="column" alignItems="center" mx={4}>
-      {nextPeriod && nextClassInfoObject ? (<>
+      {periodNumber && classData ? (<>
         <Heading size={'md'}>次の授業は</Heading>
-        <Heading size={'md'}>{nextPeriod}限（{TIMETABLE.get(nextPeriod)}）</Heading>
-        <Heading size={'lg'}>「{nextClassInfoObject.className}」</Heading>
-        <Heading size={'xl'}>@{nextClassInfoObject.room}</Heading>
+        <Heading size={'md'}>{periodNumber}限（{TIMETABLE.get(periodNumber)}）</Heading>
+        <Heading size={'lg'}>「{classData.className}」</Heading>
+        <Heading size={'xl'}>@{classData.room}</Heading>
         { /**
           * 神奈川大学では、4欠席で落単となるため、3.5欠席が上限である。
           */ }
         <Heading size={'sm'} color="gray.500">欠席数は{absenceCount}/3.5ですよ！</Heading>
 
-        {nextClassInfoObject.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}
-        {nextClassInfoObject.isClassOpen
+        {classData.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}
+        {classData.isClassOpen
           ? <Heading size={'md'}>いつもお疲れ様です！</Heading>
           : (<>
             <Heading size={'md'}>のはずだったんですが、</Heading>
             <Heading size={'md'}>休講らしいですよ！ラッキーですね！</Heading>
           </>)
         }
-        {nextClassInfoObject.isRoomChanged && (<>
+        {classData.isRoomChanged && (<>
           <Heading size={'md'}>教室が変更されているみたいです！</Heading>
           <Heading size={'md'}>気をつけてください！</Heading>
         </>)}
 
       </>) : (<>
-        {nextPeriod === undefined && (<VStack>
+        {periodNumber === undefined && (<VStack>
           <Spinner size="xl" />
           <Text>Loading...</Text>
         </VStack>)}
-        {nextPeriod === NO_CLASS_ANYMORE && (<>
+        {periodNumber === NO_MORE_CLASSES_TODAY && (<>
           <Heading size={'md'}>今日の授業はこれで終わりです！</Heading>
           <Heading size={'md'}>お疲れ様でした！</Heading>
         </>)}
