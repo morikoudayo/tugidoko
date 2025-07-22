@@ -26,7 +26,7 @@ export function AfterLogin() {
 
   const [nextClassInfoObject, setNextClassInfoObject] = useState<ClassInfo>()
   const [nextPeriod, setNextPeriod] = useState<number | undefined>(undefined)
-  const [abcenceCount, setAbcenceCount] = useState<number>(0)
+  const [absenceCount, setAbsenceCount] = useState<number>(0)
 
   /**
   * 1分ごとにupdateInfo関数が実行される。
@@ -51,7 +51,7 @@ export function AfterLogin() {
 
       setNextPeriod(calculatedNextPeriod)
       setNextClassInfoObject(currentNextClassInfoObject)
-      setAbcenceCount(fetchedAbsenceCount)
+      setAbsenceCount(fetchedAbsenceCount)
     }
 
     updateInfo();
@@ -74,7 +74,7 @@ export function AfterLogin() {
         { /**
           * 神奈川大学では、4欠席で落単となるため、3.5欠席が上限である。
           */ }
-        <Heading size={'sm'} color="gray.500">欠席数は{abcenceCount}/3.5ですよ！</Heading>
+        <Heading size={'sm'} color="gray.500">欠席数は{absenceCount}/3.5ですよ！</Heading>
 
         {nextClassInfoObject.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}
         {nextClassInfoObject.isClassOpen
