@@ -51,7 +51,9 @@ export function AfterLogin() {
       console.info('period updated')
     }
 
-    updateInfo();
+    if (test) {
+      updateInfo();
+    }
   }, [test])
 
   /**
