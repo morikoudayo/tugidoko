@@ -64,7 +64,7 @@ export const BeforeLogin = () => {
             <HoverCard.Trigger asChild>
               <Link href="#" textAlign="center" >
                 <Text color='gray.500'>
-                  Continue with Googleについて
+                  Continue with Google について
                 </Text>
               </Link>
             </HoverCard.Trigger>
@@ -73,7 +73,7 @@ export const BeforeLogin = () => {
                 <HoverCard.Content>
                   <HoverCard.Arrow />
                   <Text textStyle="sm" color="fg.muted">
-                    アップデートにより、認証情報をGoogleアカウントを用いて暗号化・保護できるようになりました。XSS攻撃を防ぐため、こちらの機能の利用を推奨します。
+                    アップデートにより、Googleアカウントを用いて認証情報を暗号化し、保護できるようになりました。XSS攻撃を防ぐため、こちらの機能の利用を推奨します。
                   </Text>
                 </HoverCard.Content>
               </HoverCard.Positioner>
