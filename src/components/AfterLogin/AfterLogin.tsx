@@ -54,7 +54,7 @@ export function AfterLogin() {
     if (test) {
       updateInfo();
     }
-  }, [test])
+  }, [test, testPeriod])
 
   /**
   * 1分ごとにupdateInfo関数が実行される。
