@@ -1,15 +1,15 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { type User, onAuthStateChanged } from "firebase/auth";
-import { OAuthUserContext } from "./OAuthUserContext.tsx";
-import { oAuth } from "./firebase.ts";
+import { FirebaseUserContext } from "./FirebaseUserContext.tsx";
+import { firebaseAuth } from "./firebase.ts";
 import { Center, Progress } from "@chakra-ui/react";
 
-export function OAuthUserProvider({ children }: { children: ReactNode }) {
-  const [oAuthUser, setOAuthUser] = useState<User | null>(null);
+export function FirebaseUserProvider({ children }: { children: ReactNode }) {
+  const [firebaseUser, setOAuthUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(oAuth, (user) => {
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
       setOAuthUser(user);
       setLoading(false);
     });
@@ -30,8 +30,8 @@ export function OAuthUserProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <OAuthUserContext.Provider value={oAuthUser}>
+    <FirebaseUserContext.Provider value={firebaseUser}>
       {children}
-    </OAuthUserContext.Provider>
+    </FirebaseUserContext.Provider>
   );
 }

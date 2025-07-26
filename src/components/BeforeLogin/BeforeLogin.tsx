@@ -5,8 +5,8 @@ import { Button, Card, Center, Checkbox, Field, Input, Stack } from '@chakra-ui/
 import { PasswordInput } from '@/components/ui/password-input';
 
 import { signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
-import { oAuth } from '@/context/OAuthUser/firebase';
-import { SignInWithGoogle } from '@/context/OAuthUser/SignInWithGoogle';
+import { firebaseAuth } from '@/context/FirebaseUser/firebase';
+import { SignInWithGoogle } from '@/context/FirebaseUser/SignInWithGoogle';
 
 export const BeforeLogin = () => {
   const auth = useAuth()
@@ -43,7 +43,7 @@ export const BeforeLogin = () => {
               <Checkbox.Label>認証情報をブラウザに保存する</Checkbox.Label>
             </Checkbox.Root>
             <SignInWithGoogle onClick={() => {
-              signInWithRedirect(oAuth, provider)
+              signInWithRedirect(firebaseAuth, provider)
             }}/>
           </Stack>
         </Card.Body>

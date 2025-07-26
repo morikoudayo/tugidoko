@@ -3,7 +3,7 @@ import { AuthContext, type AuthContextType, type User } from './AuthContext';
 import { Toaster, toaster } from '@/components/ui/toaster';
 import { clearAuthCookie, getAuthCookie } from './authCookie';
 import { clearUserCredentials, loadUserCredentials, saveUserCredentials } from './localStorage';
-import { useOAuthUser } from '@/hook/useOAuth';
+import { useFirebaseUser } from '@/hook/useFirebaseUser';
 
 const EMPTY_USER: User = {
   id: '',
@@ -14,15 +14,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(EMPTY_USER);
   const [refHour, setRefHour] = useState<string | undefined>(undefined)
 
-  const oAuthUser = useOAuthUser()
+  const firebaseUser = useFirebaseUser()
 
   /**
   * ページ読み込み時に一度だけ、ローカルストレージから認証情報を取得。
   */
   useEffect(() => {
     async function initializeUser() {
-      if (oAuthUser !== null) {
-        setUser(await loadUserCredentials(oAuthUser));
+      if (firebaseUser !== null) {
+        setUser(await loadUserCredentials(firebaseUser));
       } else {
         setUser(await loadUserCredentials());
       }
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userCredentials);
 
       if (shouldSave) {
-        if (oAuthUser !== null) {
+        if (firebaseUser !== null) {
           saveUserCredentials(userCredentials.id, userCredentials.pass)
         } else {
           saveUserCredentials(userCredentials.id, userCredentials.pass)

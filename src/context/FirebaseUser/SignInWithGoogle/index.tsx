@@ -1,10 +1,10 @@
 import { useColorMode } from '@/components/ui/color-mode';
 import { SignInWithGoogleLight } from './LightButton';
 import { SignInWithGoogleDark } from './DarkButton';
-import { useOAuthUser } from '@/hook/useOAuth';
+import { useFirebaseUser } from '@/hook/useFirebaseUser';
 import { CloseButton, HStack } from '@chakra-ui/react';
 import { signOut } from 'firebase/auth';
-import { oAuth } from '../firebase';
+import { firebaseAuth } from '@/context/FirebaseUser/firebase';
 
 interface SignInWithGoogleProps {
   onClick: () => void;
@@ -12,10 +12,10 @@ interface SignInWithGoogleProps {
 
 export function SignInWithGoogle({ onClick }: SignInWithGoogleProps) {
   const { colorMode } = useColorMode()
-  const oAuthUser = useOAuthUser()
+  const firebaseUser = useFirebaseUser()
 
   return (
-   oAuthUser === null
+   firebaseUser === null
       ? colorMode === 'light'
         ? <SignInWithGoogleLight onClick={onClick} disabled={false} />
         : <SignInWithGoogleDark onClick={onClick} disabled={false} />
@@ -23,7 +23,7 @@ export function SignInWithGoogle({ onClick }: SignInWithGoogleProps) {
         {colorMode === 'light'
           ? <SignInWithGoogleLight onClick={onClick} disabled={true} />
           : <SignInWithGoogleDark onClick={onClick} disabled={true} />}
-        <CloseButton onClick={() => { signOut(oAuth) }} />
+        <CloseButton onClick={() => { signOut(firebaseAuth) }} />
       </HStack>
   )
 }

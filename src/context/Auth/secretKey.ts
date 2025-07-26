@@ -1,8 +1,8 @@
-import { app } from "../OAuthUser/firebase";
+import { firebaseApp } from "@/context/FirebaseUser/firebase";
 import CryptoJS from 'crypto-js';
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
-const db = getFirestore(app);
+const db = getFirestore(firebaseApp);
 
 async function getNewSecretKey(userId: string): Promise<string> {
   const secretKey = CryptoJS.lib.WordArray.random(256/8).toString()

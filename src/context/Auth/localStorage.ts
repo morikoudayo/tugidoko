@@ -23,9 +23,9 @@ function decrypt(encryptedText: string, secretKey: string): string {
  * ローカルストレージに認証情報を保存。
  * Googleアカウントでログインしている場合のみIDとパスワードは暗号化される。
  */
-export async function saveUserCredentials(id: string, pass: string, oAuthUser: OAuthUser | null = null) {
-  if (oAuthUser !== null) {
-    const secretKey = await getSecretKey(oAuthUser.uid)
+export async function saveUserCredentials(id: string, pass: string, firebaseUser: OAuthUser | null = null) {
+  if (firebaseUser !== null) {
+    const secretKey = await getSecretKey(firebaseUser.uid)
 
     localStorage.setItem('crypted', 'true');
     localStorage.setItem('id', encrypt(id, secretKey));
@@ -40,7 +40,7 @@ export async function saveUserCredentials(id: string, pass: string, oAuthUser: O
 /**
  * ローカルストレージから認証情報を取得。
  */
-export async function loadUserCredentials(oAuthUser: OAuthUser | null = null): Promise<User> {
+export async function loadUserCredentials(firebaseUser: OAuthUser | null = null): Promise<User> {
   const isCrypted: boolean = localStorage.getItem('crypted') === 'true';
   const savedId = localStorage.getItem('id');
   const savedPass = localStorage.getItem('pass');
@@ -51,8 +51,8 @@ export async function loadUserCredentials(oAuthUser: OAuthUser | null = null): P
   }
 
   if (isCrypted) {
-    if (oAuthUser !== null && savedId !== null && savedPass !== null) {
-      const secretKey = await getSecretKey(oAuthUser.uid)
+    if (firebaseUser !== null && savedId !== null && savedPass !== null) {
+      const secretKey = await getSecretKey(firebaseUser.uid)
 
       userCredentials.id = decrypt(savedId, secretKey)
       userCredentials.pass = decrypt(savedPass, secretKey)
