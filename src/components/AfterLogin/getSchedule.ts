@@ -28,14 +28,20 @@ function extractClassDataContent(classElement: Element): string {
 /**
  * スケジュール情報を学内ポータルから取得してパースする
  */
-export async function getSchedule(): Promise<Schedule> {
-  const response = await fetch('/campusweb/portal.do?page=main')
+export async function getSchedule(test: boolean = false): Promise<Schedule> {
+  let response: Response
+  if (test) {
+    response = await fetch('/schedule.html')
+  } else {
+    response = await fetch('/campusweb/portal.do?page=main')
+  }
+
   const html = await response.text()
 
   const document = parseHTML(html);
   const classElements = document.querySelectorAll('ul.mysch-portlet-list li');
 
-  let schedule:Schedule = new Map();
+  let schedule: Schedule = new Map();
   classElements.forEach(classElement => {
     const classContent = extractClassDataContent(classElement)
 
@@ -75,7 +81,7 @@ export async function getSchedule(): Promise<Schedule> {
     }
   });
 
-  schedule = await getAbsenceCounts(schedule)
+  schedule = await getAbsenceCounts(schedule, test)
 
   return schedule
 }

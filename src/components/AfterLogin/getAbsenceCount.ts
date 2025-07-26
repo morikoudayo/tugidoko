@@ -3,8 +3,14 @@ import { parseHTML, type Schedule } from "./getSchedule";
 /**
  * 授業の欠席回数を学内ポータルから取得しschedule内の各ClassDataのabsenceCountに代入する。
  */
-export async function getAbsenceCounts(schedule: Schedule): Promise<Schedule> {
-  const response = await fetch('/campusweb/campussquare.do?_flowId=AAW0001000-flow&link=menu-link-mf-135117')
+export async function getAbsenceCounts(schedule: Schedule, test: boolean = false): Promise<Schedule> {
+  let response: Response
+  if (test) {
+    response = await fetch('/absence.html')
+  } else {
+    response = await fetch('/campusweb/campussquare.do?_flowId=AAW0001000-flow&link=menu-link-mf-135117')
+  }
+
   const html = await response.text()
 
   const document = parseHTML(html)

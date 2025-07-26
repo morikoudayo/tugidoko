@@ -29,6 +29,32 @@ export function AfterLogin() {
   const [noMoreClasses, setNoMoreClasses] = useState<boolean>(false)
 
   /**
+  * テスト用
+  */
+  const [test, setTest] = useState(false);
+  const [testPeriod, setTestPeriod] = useState(0);
+  (window as Window & { setTest?: typeof setTest }).setTest = setTest;
+  (window as Window & { setTestPeriod?: typeof setTestPeriod }).setTestPeriod = setTestPeriod;
+
+  useEffect(() => {
+    async function updateInfo(): Promise<void> {
+      await activateSession(auth.user);
+      schedule.current = await getSchedule(test);
+      await deactivateSession();
+      console.info('schedule updated');
+
+      if (testPeriod == NO_MORE_CLASSES) {
+        setNoMoreClasses(true)
+      } else {
+        setClassData(schedule.current.get(testPeriod))
+      }
+      console.info('period updated')
+    }
+
+    updateInfo();
+  }, [test])
+
+  /**
   * 1分ごとにupdateInfo関数が実行される。
   * getScheduleおよびsetScheduleは日付が変更された場合のみ実行される。
   * また、updateInfo関数では、現在時刻から次の授業の時限の取得、次の授業の各情報の取得、次の授業の欠席回数の取得を行う。
@@ -59,15 +85,18 @@ export function AfterLogin() {
       }
     }
 
-    updateInfo();
-    const interval = setInterval(() => {
+    if (!test) {
       updateInfo();
-    }, 60 * 1000);
+      const interval = setInterval(() => {
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [])
+        updateInfo();
+      }, 60 * 1000);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [test])
 
   return (
     <Center h='100vh' flexDirection="column" alignItems="center" mx={4}>
