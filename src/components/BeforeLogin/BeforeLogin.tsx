@@ -6,7 +6,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 
 import { signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 import { firebaseAuth } from '@/context/FirebaseUser/firebase';
-import { SignInWithGoogle } from '@/context/FirebaseUser/SignInWithGoogle';
+import { SignInWithGoogle } from '@/components/ui/SignInWithGoogle';
 
 export const BeforeLogin = () => {
   const auth = useAuth()
