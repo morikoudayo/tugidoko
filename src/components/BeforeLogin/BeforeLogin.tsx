@@ -64,7 +64,7 @@ export const BeforeLogin = () => {
             <HoverCard.Trigger asChild>
               <Link href="#" textAlign="center" >
                 <Text color='gray.500'>
-                  Googleアカウントについて
+                  Continue with Googleについて
                 </Text>
               </Link>
             </HoverCard.Trigger>
