@@ -3,6 +3,7 @@ import { useAuth } from '@/hook/useAuth';
 import { Button, Center, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { getSchedule, type ClassData, type Schedule } from './getSchedule';
 import { getNextPeriodNumber, NO_MORE_CLASSES } from './getNextPeriodNumber';
+import { activateSession, deactivateSession } from '@/context/Auth/authCookie';
 
 /**
 * 神奈川大学の時間割。
@@ -38,7 +39,9 @@ export function AfterLogin() {
       if (lastFetchedDate.current == undefined || lastFetchedDate.current !== currentDate) {
         lastFetchedDate.current = currentDate;
 
+        await activateSession(auth.user);
         schedule.current = await getSchedule();
+        await deactivateSession();
         console.info('schedule updated');
       }
 
