@@ -4,7 +4,8 @@ import type { User } from "./AuthContext";
  * 学内ポータルの認証クッキーを取得。
  * クッキーはブラウザによって自動的に管理されるのでここでは認証情報をPOSTするだけ。
  */
-export async function getAuthCookie(userCredentials: User): Promise<boolean> {
+
+export async function activateSession(userCredentials: User): Promise<boolean> {
   const response = await fetch('/amserver/UI/Login', {
     method: 'POST',
     credentials: 'include',
@@ -32,9 +33,10 @@ export async function getAuthCookie(userCredentials: User): Promise<boolean> {
 }
 
 /**
- * 学内ポータルの認証クッキーをクリア。
- * domainの指定が必須。
+ * セッションを無効化。
  */
-export function clearAuthCookie(): void {
-  document.cookie = `iPlanetDirectoryPro=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.nginx-app-109380428695.asia-northeast1.run.app;`;
+export async function deactivateSession(): Promise<boolean> {
+  const response = await fetch('/amserver/identity/logout');
+  
+  return response.ok
 }
