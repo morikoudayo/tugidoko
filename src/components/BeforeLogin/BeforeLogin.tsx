@@ -4,12 +4,18 @@ import { useRef } from 'react';
 import { Button, Card, Center, Checkbox, Field, Input, Stack } from '@chakra-ui/react';
 import { PasswordInput } from '@/components/ui/password-input';
 
+import { signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
+import { oAuth } from '@/context/OAuthUser/firebase';
+import { SignInWithGoogle } from '@/context/OAuthUser/SignInWithGoogle';
+
 export const BeforeLogin = () => {
   const auth = useAuth()
 
   const idRef = useRef<HTMLInputElement | null>(null);
   const passRef = useRef<HTMLInputElement | null>(null);
   const saveRef = useRef<HTMLInputElement | null>(null);
+
+  const provider = new GoogleAuthProvider();
 
   return (
     <Center h='100vh'>
@@ -36,6 +42,9 @@ export const BeforeLogin = () => {
               </Checkbox.Control>
               <Checkbox.Label>認証情報をブラウザに保存する</Checkbox.Label>
             </Checkbox.Root>
+            <SignInWithGoogle onClick={() => {
+              signInWithRedirect(oAuth, provider)
+            }}/>
           </Stack>
         </Card.Body>
         <Card.Footer justifyContent='flex-end'>
