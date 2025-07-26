@@ -2,22 +2,33 @@ import { useState, useEffect, type ReactNode } from 'react';
 import { AuthContext, type AuthContextType, type User } from './AuthContext';
 import { Toaster, toaster } from '@/components/ui/toaster';
 import { clearAuthCookie, getAuthCookie } from './authCookie';
-import { clearUserCredentials, loadUserCredentials } from './localStorage';
+import { clearUserCredentials, loadUserCredentials, saveUserCredentials } from './localStorage';
+import { useOAuthUser } from '@/hook/useOAuth';
 
 const EMPTY_USER: User = {
   id: '',
   pass: ''
 }
 
-export function AuthContextProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User>(EMPTY_USER);
   const [refHour, setRefHour] = useState<string | undefined>(undefined)
+
+  const oAuthUser = useOAuthUser()
 
   /**
   * ページ読み込み時に一度だけ、ローカルストレージから認証情報を取得。
   */
   useEffect(() => {
-    setUser(loadUserCredentials());
+    async function initializeUser() {
+      if (oAuthUser !== null) {
+        setUser(await loadUserCredentials(oAuthUser));
+      } else {
+        setUser(await loadUserCredentials());
+      }
+    }
+
+    initializeUser();
   }, []);
 
   /**
@@ -34,8 +45,11 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
       setUser(userCredentials);
 
       if (shouldSave) {
-        localStorage.setItem('id', userCredentials.id);
-        localStorage.setItem('pass', userCredentials.pass);
+        if (oAuthUser !== null) {
+          saveUserCredentials(userCredentials.id, userCredentials.pass)
+        } else {
+          saveUserCredentials(userCredentials.id, userCredentials.pass)
+        }
       }
     } else {
       toaster.create({
@@ -82,7 +96,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   }, [user, refHour]);
 
   /**
-  * 以下はproviderの定義。
+  * 以下はProviderの定義。
   */
   const contextValue: AuthContextType = {
     user,
