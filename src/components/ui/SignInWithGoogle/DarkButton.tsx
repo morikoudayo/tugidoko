@@ -1,4 +1,4 @@
-import './dark.css'
+import styles from './dark.module.css'
 import { SignInWithGoogleRaw } from './RawButton';
 
 interface SignInWithGoogleDarkProps {
@@ -7,5 +7,5 @@ interface SignInWithGoogleDarkProps {
 }
 
 export function SignInWithGoogleDark({ onClick, disabled }: SignInWithGoogleDarkProps) {
-  return <SignInWithGoogleRaw onClick={onClick} disabled={disabled}/>
+  return <SignInWithGoogleRaw styles={styles} onClick={onClick} disabled={disabled} />
 }

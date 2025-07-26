@@ -1,4 +1,4 @@
-import './light.css'
+import styles from './light.module.css'
 import { SignInWithGoogleRaw } from './RawButton';
 
 interface SignInWithGoogleLightProps {
@@ -7,5 +7,5 @@ interface SignInWithGoogleLightProps {
 }
 
 export function SignInWithGoogleLight({ onClick, disabled }: SignInWithGoogleLightProps) {
-  return <SignInWithGoogleRaw onClick={onClick} disabled={disabled}/>
+  return <SignInWithGoogleRaw styles={styles} onClick={onClick}  disabled={disabled} />
 }
