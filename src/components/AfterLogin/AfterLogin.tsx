@@ -46,6 +46,7 @@ export function AfterLogin() {
       if (testPeriod == NO_MORE_CLASSES) {
         setNoMoreClasses(true)
       } else {
+        setNoMoreClasses(false)
         setClassData(schedule.current.get(testPeriod))
       }
       console.info('period updated')
@@ -80,6 +81,7 @@ export function AfterLogin() {
         if (periodNumber.current == NO_MORE_CLASSES) {
           setNoMoreClasses(true)
         } else {
+          setNoMoreClasses(false)
           setClassData(schedule.current.get(periodNumber.current))
         }
 
