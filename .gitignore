@@ -23,6 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-src/context/FirebaseUser/firebase.ts
-schedule.html
-absence.html
+/src/context/FirebaseUser/firebase.ts
+/schedule.html
+/absence.html

@@ -13,7 +13,7 @@ interface SignInWithGoogleProps {
 export function SignInWithGoogle({ onClick }: SignInWithGoogleProps) {
   const { colorMode } = useColorMode()
   const firebaseUser = useFirebaseUser()
-
+  
   return (
    firebaseUser === null
       ? colorMode === 'light'
