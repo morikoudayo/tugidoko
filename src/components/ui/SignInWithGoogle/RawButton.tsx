@@ -1,11 +1,9 @@
-import './button.css'
-
-interface ButtonProps {
+interface SignInWithGoogleRawProps {
   onClick: () => void;
   disabled: boolean;
 }
 
-export function SignInWithGoogleButton({ onClick, disabled }: ButtonProps) {
+export function SignInWithGoogleRaw({ onClick, disabled }: SignInWithGoogleRawProps) {
   return (<button className="gsi-material-button" onClick={onClick} disabled={disabled}>
     <div className="gsi-material-button-state"></div>
     <div className="gsi-material-button-content-wrapper">
