@@ -4,6 +4,7 @@ import { Button, Center, Heading, Spinner, Text, VStack } from '@chakra-ui/react
 import { getSchedule, type ClassData, type Schedule } from './getSchedule';
 import { getNextPeriodNumber, NO_MORE_CLASSES } from './getNextPeriodNumber';
 import { activateSession, deactivateSession } from '@/context/Auth/authCookie';
+import { getAbsenceCounts, type AbsenceCounts } from './getAbsenceCount';
 
 /**
 * 神奈川大学の時間割。
@@ -23,9 +24,11 @@ export function AfterLogin() {
 
   const lastFetchedDate = useRef<string | undefined>(undefined)
   const schedule = useRef<Schedule>(new Map())
+  const absenceCounts = useRef<AbsenceCounts>(new Map())
   const periodNumber = useRef<number | undefined>(undefined)
 
   const [classData, setClassData] = useState<ClassData>()
+  const [absenceCount, setAbsenceCount] = useState<number>(0)
   const [noMoreClasses, setNoMoreClasses] = useState<boolean>(false)
 
   /**
@@ -40,16 +43,25 @@ export function AfterLogin() {
     async function updateInfo(): Promise<void> {
       await activateSession(auth.user);
       schedule.current = await getSchedule(test);
-      await deactivateSession();
       console.info('schedule updated');
 
       if (testPeriod == NO_MORE_CLASSES) {
         setNoMoreClasses(true)
       } else {
         setNoMoreClasses(false)
-        setClassData(schedule.current.get(testPeriod))
+
+        const nextClassData = schedule.current.get(testPeriod)
+        setClassData(nextClassData)
       }
       console.info('period updated')
+
+      absenceCounts.current = await getAbsenceCounts(test)
+      deactivateSession();
+
+      const nextClassData = schedule.current.get(testPeriod)
+      if (nextClassData?.className !== undefined) {
+        setAbsenceCount(absenceCounts.current.get(nextClassData.className!)!)
+      }
     }
 
     if (test) {
@@ -65,27 +77,45 @@ export function AfterLogin() {
   useEffect(() => {
     async function updateInfo(): Promise<void> {
       const currentDate = new Date().toDateString()
-      if (lastFetchedDate.current == undefined || lastFetchedDate.current !== currentDate) {
+      const isDayChanged = lastFetchedDate.current == undefined || lastFetchedDate.current !== currentDate
+
+      if (isDayChanged) {
         lastFetchedDate.current = currentDate;
 
         await activateSession(auth.user);
         schedule.current = await getSchedule();
-        await deactivateSession();
         console.info('schedule updated');
       }
 
       const nextPeriodNumber = await getNextPeriodNumber(schedule.current)
-      if (periodNumber.current !== nextPeriodNumber) {
+      const isPeriodChanged = periodNumber.current !== nextPeriodNumber
+
+      if (isPeriodChanged) {
         periodNumber.current = nextPeriodNumber
 
-        if (periodNumber.current == NO_MORE_CLASSES) {
+        if (nextPeriodNumber == NO_MORE_CLASSES) {
           setNoMoreClasses(true)
         } else {
           setNoMoreClasses(false)
-          setClassData(schedule.current.get(periodNumber.current))
+
+          const nextClassData = schedule.current.get(nextPeriodNumber)
+          setClassData(nextClassData)
         }
 
         console.info('period updated')
+      }
+
+      if (isDayChanged) {
+        absenceCounts.current = await getAbsenceCounts()
+        deactivateSession();
+      }
+
+      if (isPeriodChanged) {
+        const nextClassData = schedule.current.get(nextPeriodNumber)
+
+        if (nextClassData?.className !== undefined) {
+          setAbsenceCount(absenceCounts.current.get(nextClassData.className)!)
+        }
       }
     }
 
@@ -112,7 +142,7 @@ export function AfterLogin() {
         { /**
           * 神奈川大学では、4欠席で落単となるため、3.5欠席が上限である。
           */ }
-        <Heading size={'sm'} color="gray.500">欠席数は{classData.absenceCount}/3.5ですよ！</Heading>
+        <Heading size={'sm'} color="gray.500">欠席数は{absenceCount}/3.5ですよ！</Heading>
 
         {classData.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}
         {classData.isClassOpen

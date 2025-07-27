@@ -1,5 +1,3 @@
-import { getAbsenceCounts } from "./getAbsenceCount";
-
 export interface ClassData {
   period: number;
   className: string;
@@ -7,7 +5,6 @@ export interface ClassData {
   isClassOpen: boolean;
   isRoomChanged: boolean;
   isMakeupClass: boolean;
-  absenceCount: number;
 }
 
 export type Schedule = Map<number, ClassData>;
@@ -41,7 +38,7 @@ export async function getSchedule(test: boolean = false): Promise<Schedule> {
   const document = parseHTML(html);
   const classElements = document.querySelectorAll('ul.mysch-portlet-list li');
 
-  let schedule: Schedule = new Map();
+  const schedule: Schedule = new Map();
   classElements.forEach(classElement => {
     const classContent = extractClassDataContent(classElement)
 
@@ -74,14 +71,11 @@ export async function getSchedule(test: boolean = false): Promise<Schedule> {
         isClassOpen: isClassOpen,
         isRoomChanged: isRoomChanged,
         isMakeupClass: isMakeupClass,
-        absenceCount: 0,
       };
 
       schedule.set(period, classData)
     }
   });
-
-  schedule = await getAbsenceCounts(schedule, test)
 
   return schedule
 }

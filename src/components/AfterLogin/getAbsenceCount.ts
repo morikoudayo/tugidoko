@@ -1,9 +1,11 @@
-import { parseHTML, type Schedule } from "./getSchedule";
+import { parseHTML } from "./getSchedule";
+
+export type AbsenceCounts = Map<string, number>;
 
 /**
  * 授業の欠席回数を学内ポータルから取得しschedule内の各ClassDataのabsenceCountに代入する。
  */
-export async function getAbsenceCounts(schedule: Schedule, test: boolean = false): Promise<Schedule> {
+export async function getAbsenceCounts(test: boolean = false): Promise<AbsenceCounts> {
   let response: Response
   if (test) {
     response = await fetch('/absence.html')
@@ -31,10 +33,5 @@ export async function getAbsenceCounts(schedule: Schedule, test: boolean = false
     absenceCounts.set(className, absenceCount)
   })
 
-  schedule.forEach((classData, period) => {
-    classData.absenceCount = absenceCounts.get(classData.className)!
-    schedule.set(period, classData)
-  })
-
-  return schedule
+  return absenceCounts
 }
