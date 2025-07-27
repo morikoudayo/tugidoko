@@ -5,12 +5,12 @@ import { firebaseAuth } from "./firebase.ts";
 import { Center, Progress } from "@chakra-ui/react";
 
 export function FirebaseUserProvider({ children }: { children: ReactNode }) {
-  const [firebaseUser, setOAuthUser] = useState<User | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
-      setOAuthUser(user);
+      setFirebaseUser(user);
       setLoading(false);
     });
 
