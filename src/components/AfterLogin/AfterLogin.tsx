@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/hook/useAuth';
 import { Button, Center, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { getSchedule, type ClassData, type Schedule } from './getSchedule';
-import { getNextPeriodNumber, NO_MORE_CLASSES } from './getNextPeriodNumber';
+import { getNextPeriod, NO_MORE_CLASSES } from './getNextPeriod';
 import { activateSession, deactivateSession } from '@/context/Auth/authCookie';
 import { getAbsenceCounts, type AbsenceCounts } from './getAbsenceCount';
 
@@ -22,107 +22,36 @@ const TIMETABLE = new Map([
 export function AfterLogin() {
   const auth = useAuth()
 
-  const lastFetchedDate = useRef<string | undefined>(undefined)
-  const schedule = useRef<Schedule>(new Map())
-  const absenceCounts = useRef<AbsenceCounts>(new Map())
-  const periodNumber = useRef<number | undefined>(undefined)
+  const [date, setDate] = useState<number>(new Date().getDate())
+  const [nextPeriod, setNextPeriod] = useState<number | undefined>(undefined)
 
-  const [classData, setClassData] = useState<ClassData>()
-  const [absenceCount, setAbsenceCount] = useState<number>(0)
+  const [schedule, setSchedule] = useState<Schedule>(new Map())
+  const [absenceCounts, setAbsenceCounts] = useState<AbsenceCounts>(new Map())
+
+  const [nextClassData, setNextClassData] = useState<ClassData>()
+  const [absenceCount, setAbsenceCount] = useState<number | undefined>(undefined)
   const [noMoreClasses, setNoMoreClasses] = useState<boolean>(false)
 
   /**
-  * テスト用
+  * テスト用ステート
   */
-  const [test, setTest] = useState(false);
+  const [testMode, setTestMode] = useState(false);
   const [testPeriod, setTestPeriod] = useState(0);
-  (window as Window & { setTest?: typeof setTest }).setTest = setTest;
+  (window as Window & { setTestMode?: typeof setTestMode }).setTestMode = setTestMode;
   (window as Window & { setTestPeriod?: typeof setTestPeriod }).setTestPeriod = setTestPeriod;
 
-  useEffect(() => {
-    async function updateInfo(): Promise<void> {
-      await activateSession(auth.user);
-      schedule.current = await getSchedule(test);
-      console.info('schedule updated');
-
-      if (testPeriod == NO_MORE_CLASSES) {
-        setNoMoreClasses(true)
-      } else {
-        setNoMoreClasses(false)
-
-        const nextClassData = schedule.current.get(testPeriod)
-        setClassData(nextClassData)
-      }
-      console.info('period updated')
-
-      absenceCounts.current = await getAbsenceCounts(test)
-      deactivateSession();
-
-      const nextClassData = schedule.current.get(testPeriod)
-      if (nextClassData?.className !== undefined) {
-        setAbsenceCount(absenceCounts.current.get(nextClassData.className!)!)
-      }
-    }
-
-    if (test) {
-      updateInfo();
-    }
-  }, [test, testPeriod])
-
   /**
-  * 1分ごとにupdateInfo関数が実行される。
-  * getScheduleおよびsetScheduleは日付が変更された場合のみ実行される。
-  * また、updateInfo関数では、現在時刻から次の授業の時限の取得、次の授業の各情報の取得、次の授業の欠席回数の取得を行う。
+  * 日付と時限を60秒ごとに取得。
   */
   useEffect(() => {
     async function updateInfo(): Promise<void> {
-      const currentDate = new Date().toDateString()
-      const isDayChanged = lastFetchedDate.current == undefined || lastFetchedDate.current !== currentDate
-
-      if (isDayChanged) {
-        lastFetchedDate.current = currentDate;
-
-        await activateSession(auth.user);
-        schedule.current = await getSchedule();
-        console.info('schedule updated');
-      }
-
-      const nextPeriodNumber = await getNextPeriodNumber(schedule.current)
-      const isPeriodChanged = periodNumber.current !== nextPeriodNumber
-
-      if (isPeriodChanged) {
-        periodNumber.current = nextPeriodNumber
-
-        if (nextPeriodNumber == NO_MORE_CLASSES) {
-          setNoMoreClasses(true)
-        } else {
-          setNoMoreClasses(false)
-
-          const nextClassData = schedule.current.get(nextPeriodNumber)
-          setClassData(nextClassData)
-        }
-
-        console.info('period updated')
-      }
-
-      if (isDayChanged) {
-        absenceCounts.current = await getAbsenceCounts()
-        deactivateSession();
-      }
-
-      if (isPeriodChanged) {
-        const nextClassData = schedule.current.get(nextPeriodNumber)
-
-        if (nextClassData?.className !== undefined) {
-          setAbsenceCount(absenceCounts.current.get(nextClassData.className)!)
-        }
-      }
+      setDate(new Date().getDate())
+      setNextPeriod(getNextPeriod())
     }
 
-    if (!test) {
+    if (!testMode) {
       updateInfo();
       const interval = setInterval(() => {
-
         updateInfo();
       }, 60 * 1000);
 
@@ -130,29 +59,85 @@ export function AfterLogin() {
         clearInterval(interval);
       };
     }
-  }, [test])
+  }, [testMode])
+
+  /**
+  * 日によって変わる情報（開講情報、欠席回数のテーブル）を取得。
+  */
+  useEffect(() => {
+    if (!auth.user.id) return;
+
+    console.info('date updated');
+
+    async function updateDailyInfo() {
+      if (!testMode) await activateSession(auth.user);
+      setSchedule(await getSchedule(testMode));
+      setAbsenceCounts(await getAbsenceCounts(testMode));
+      if (!testMode) deactivateSession();
+    }
+
+    updateDailyInfo();
+  }, [auth.user, date, testMode])
+
+  /**
+  * 次の授業の情報を取得。
+  */
+  useEffect(() => {
+    if (testMode && testPeriod === undefined) return;
+    if (!testMode && nextPeriod === undefined) return;
+    if (schedule.size === 0) return;
+
+    console.info('next period or schedule updated')
+
+    let nextScheduledPeriod = testMode ? testPeriod : nextPeriod!
+    for (; ; nextScheduledPeriod++) {
+      if (schedule.has(nextScheduledPeriod)) {
+        break;
+      }
+    }
+
+    if (nextScheduledPeriod == NO_MORE_CLASSES) {
+      setNoMoreClasses(true)
+      return
+    } else {
+      setNoMoreClasses(false)
+    }
+
+    setNextClassData(schedule.get(nextScheduledPeriod))
+  }, [nextPeriod, schedule, testMode, testPeriod])
+
+  /**
+  * 次の授業の欠席回数を取得。
+  */
+  useEffect(() => {
+    if (nextClassData === undefined) return;
+    console.info('absence counts updated')
+
+    setAbsenceCount(absenceCounts.get(nextClassData.className))
+  }, [nextClassData, absenceCounts])
 
   return (
     <Center h='100vh' flexDirection="column" alignItems="center" mx={4}>
-      {classData ? (<>
+      {nextClassData ? (<>
         <Heading size={'md'}>次の授業は</Heading>
-        <Heading size={'md'}>{classData.period}限（{TIMETABLE.get(classData.period)}）</Heading>
-        <Heading size={'lg'}>「{classData.className}」</Heading>
-        <Heading size={'xl'}>@{classData.room}</Heading>
+        <Heading size={'md'}>{nextClassData.period}限（{TIMETABLE.get(nextClassData.period)}）</Heading>
+        <Heading size={'lg'}>「{nextClassData.className}」</Heading>
+        <Heading size={'xl'}>@{nextClassData.room}</Heading>
         { /**
           * 神奈川大学では、4欠席で落単となるため、3.5欠席が上限である。
           */ }
-        <Heading size={'sm'} color="gray.500">欠席数は{absenceCount}/3.5ですよ！</Heading>
+        <Heading size={'sm'} color="gray.500">欠席数は{absenceCount ? absenceCount : '不明'}/3.5ですよ！</Heading>
 
-        {classData.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}
-        {classData.isClassOpen
+
+        {nextClassData.isMakeupClass && <Heading size={'md'}>補講ですか。。。大変ですね。。。</Heading>}
+        {nextClassData.isClassOpen
           ? <Heading size={'md'}>いつもお疲れ様です！</Heading>
           : (<>
             <Heading size={'md'}>のはずだったんですが、</Heading>
             <Heading size={'md'}>休講らしいですよ！ラッキーですね！</Heading>
           </>)
         }
-        {classData.isRoomChanged && (<>
+        {nextClassData.isRoomChanged && (<>
           <Heading size={'md'}>教室が変更されているみたいです！</Heading>
           <Heading size={'md'}>気をつけてください！</Heading>
         </>)}

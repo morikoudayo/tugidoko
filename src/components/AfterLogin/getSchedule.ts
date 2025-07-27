@@ -1,3 +1,5 @@
+import { NO_MORE_CLASSES } from "./getNextPeriod";
+
 export interface ClassData {
   period: number;
   className: string;
@@ -38,7 +40,7 @@ export async function getSchedule(test: boolean = false): Promise<Schedule> {
   const document = parseHTML(html);
   const classElements = document.querySelectorAll('ul.mysch-portlet-list li');
 
-  const schedule: Schedule = new Map();
+  const schedule: Schedule = new Map([[NO_MORE_CLASSES, {} as ClassData]]);
   classElements.forEach(classElement => {
     const classContent = extractClassDataContent(classElement)
 
