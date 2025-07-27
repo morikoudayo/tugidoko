@@ -14,6 +14,11 @@ async function getNewSecretKey(userId: string): Promise<string> {
   return secretKey
 }
 
+/**
+ * シークレットキーをFirestoreから取得。
+ * なければシークレットキーを生成し、Firestoreに格納。
+ * 有効期限をつけたい。
+ */
 export async function getSecretKey(userId: string): Promise<string> {
   const docRef = doc(db, "secretKeys", userId);
   const docSnap = await getDoc(docRef);
