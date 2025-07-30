@@ -1,69 +1,60 @@
-# React + TypeScript + Vite
+# 神奈川大学の学生向け授業・欠席情報一括表示Webアプリ「つぎどこ」
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 概要
 
-Currently, two official plugins are available:
+「つぎどこ」は、神奈川大学の学生が自分の次の授業に関する情報（休講情報、開講教室、欠席回数）を一目で確認できるWebアプリである。学内ポータルの複雑な操作性やスマートフォンへの非対応といった課題を解消し、限られた教室間の移動時間の中でも迅速に必要な情報へアクセスできるよう設計されている。広いキャンパスや劣悪な通信環境といった神奈川大学特有の環境をふまえ、学生がスムーズに次の授業へ向かえることを目的としている。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 執筆者
 
-## Expanding the ESLint configuration
+- 森 康太朗
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 背景
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+神奈川大学の学内ポータルサイトでは、授業に関する情報や欠席回数を確認する際に、画面をスクロールしたり複数のページを移動したりする必要があり、情報へのアクセスが煩雑である。さらに、スマートフォンへの対応も不十分で、外出先や移動中に確認するには不便な設計となっている。
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+こうした使いづらさは、神奈川大学特有の物理的環境とも重なり、学生にとってより深刻な問題となっている。具体的には、キャンパスの広さや最寄り駅からの距離、さらに利用者が集中する時間帯におけるWi-Fiの通信速度低下などの要因が影響し、教室間の移動時間が限られている中で、学内ポータルから次の授業の情報を迅速に確認することが困難である。
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+その結果、必要な情報を把握できないまま授業に遅れてしまうケースも見られる。また、事前に教室を把握していても、直前に教室変更が行われることもあり、最新情報の確認は欠かせない。
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### チーム
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+神奈川大学の学生複数名をテストユーザーとしてフィードバックを得ながら、個人で開発を行った。
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 解決手法
+
+現在時刻に基づいて次に受講する授業を自動判別し、学内ポータル（WebStation）から以下の情報を取得・表示するWebアプリを製作した。
+
+- 科目名
+- 開講教室
+- 休講情報
+- 欠席回数
+
+フロントエンドにはReact + TypeScript + Chakra UIを採用した。
+
+ログイン画面とメイン画面の2画面によるミニマルな構成とし、スマートフォンでの利用を前提としたレスポンシブデザインを実装している。各画面の情報は、スマートフォンのブラウザの表示領域に収まるよう最適化されている。
+
+シンプルな画面構成のため、React RouterやTan Stackは導入せず、状態管理によるページ切り替えで実装している。
+
+<div style="display: flex; gap: 10px; margin-bottom: 10px;">
+  <img src="./img/screenshot_before_login.png" alt="ログイン前" width="300">
+  <img src="./img/screenshot_after_login.png" alt="ログイン後" width="300">
+</div>
+
+第三者による介入リスクを低減するため、バックエンドサーバーを排除し、リバースプロキシによってCORS制限を回避してフロントエンドが直接学内ポータルから情報を取得する構成とした。さらに、リバースプロキシでのSSL/TLS通信の復号化処理において認証情報が漏洩するリスクを軽減するため、セキュリティが強化されたChainguard社のnginxコンテナイメージを採用した。
+
+また、学内ポータルから情報を取得するにあたっては学内ポータルのアカウントであるMNS Account IDとパスワードを用いる。MNS Account IDとパスワードは学内の他のサービスでも用いられており、慎重な取り扱いが求められる。一方でユーザの利便性向上には認証情報の保存機能が不可欠であった。
+
+そのため、MNS Account IDとパスワードはブラウザのローカルストレージのみに保存することとした。さらに、XSS攻撃による認証情報の奪取を防ぐため、Google OAuthによる認証を通じてFirestore上に暗号化キーを保管し、ブラウザに保存される認証情報はこのキーを用いて暗号化する仕組みを実装した。
+
+![アーキテクチャ](./architecture.png "アーキテクチャ")
+
+## 今後の展望
+
+本取り組みにおいて最も評価されるべき点は、その汎用性の高さにあると考える。学内ポータルシステムであるWebStationは、学生生活に必要な情報が集約されている一方、ユーザビリティの低さが課題として指摘されてきた。本取り組みで提案するアーキテクチャを用いることで、セキュリティリスクを最小化しつつ、WebStation上の情報資源を効果的に抽出・活用することが可能となる。
+
+具体的な展開例として、WebStationの掲示板機能の改善が挙げられる。現在、掲示板には検索機能が実装されておらず、学生は必要な情報を探すために膨大な投稿履歴を手動で遡らなければならない。また、新着投稿を既読にした後は、その投稿が他の新着投稿に埋もれてしまい、後から参照することが困難になるという問題も生じている。本アーキテクチャを活用することで、セキュリティリスクを最小化しながら掲示板に検索機能を実装し、これらの課題を解決することができる。
+
+今後は、この汎用的アーキテクチャを基盤として、掲示板検索機能の実装を第一段階とし、段階的な機能拡張を進めていく予定である。これにより、WebStationの利便性を大幅に向上させ、学生の情報収集効率を飛躍的に改善することが期待される。
+
+## 参考
+[リポジトリ](https://github.com/m-dev672/tugidoko "リポジトリ")
