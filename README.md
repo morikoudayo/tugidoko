@@ -36,8 +36,9 @@
 シンプルな画面構成のため、React RouterやTan Stackは導入せず、状態管理によるページ切り替えで実装している。
 
 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-  <img src="./img/screenshot_before_login.png" alt="ログイン前" width="300">
-  <img src="./img/screenshot_after_login.png" alt="ログイン後" width="300">
+  <img src="./img/screenshot_before_login.png" alt="ログイン前" width="300" style="border: 2px solid #ccc;">
+  <img src="./img/screenshot_after_login.png" alt="ログイン後" width="300"
+  style="border: 2px solid #ccc;">
 </div>
 
 第三者による介入リスクを低減するため、バックエンドサーバーを排除し、リバースプロキシによってCORS制限を回避してフロントエンドが直接学内ポータルから情報を取得する構成とした。さらに、リバースプロキシでのSSL/TLS通信の復号化処理において認証情報が漏洩するリスクを軽減するため、セキュリティが強化されたChainguard社のnginxコンテナイメージを採用した。
@@ -46,7 +47,7 @@
 
 そのため、MNS Account IDとパスワードはブラウザのローカルストレージのみに保存することとした。さらに、XSS攻撃による認証情報の奪取を防ぐため、Google OAuthによる認証を通じてFirestore上に暗号化キーを保管し、ブラウザに保存される認証情報はこのキーを用いて暗号化する仕組みを実装した。
 
-![アーキテクチャ](./architecture.png "アーキテクチャ")
+![アーキテクチャ](./img/architecture.png "アーキテクチャ")
 
 ## 今後の展望
 
