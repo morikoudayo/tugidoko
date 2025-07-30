@@ -4,6 +4,10 @@ import { FirebaseUserContext } from "./FirebaseUserContext.tsx";
 import { firebaseAuth } from "./firebase.ts";
 import { Center, Progress } from "@chakra-ui/react";
 
+/**
+ * 初回のonAuthStateChangedが行われるまでchildrenは読み込まず、
+ * ローディング画面を表示するので、firebaseUserの値にundefinedは入らない。
+ */
 export function FirebaseUserProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);

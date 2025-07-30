@@ -4,6 +4,9 @@ import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
 const db = getFirestore(firebaseApp);
 
+/**
+ * シークレットキーを生成し、Firestoreに格納。
+ */
 async function getNewSecretKey(userId: string): Promise<string> {
   const secretKey = CryptoJS.lib.WordArray.random(256/8).toString()
 
