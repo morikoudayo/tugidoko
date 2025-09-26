@@ -37,7 +37,7 @@ commands:
         sudo sh -c 'echo "checode:x:1234:1234:checode user:/home/checode:/bin/bash" >> /etc/passwd' && \
         sudo mkdir -p /home/checode && \
         sudo chown $(id -u):$(id -g) /home/checode && \
-        npm install
+        /usr/bin/npm install
 
 events:
   postStart:
