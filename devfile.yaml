@@ -17,6 +17,7 @@ components:
     attributes:
       merge-parent: true
     container:
+      image: registry.access.redhat.com/ubi8/nodejs-18:1-32
       mountSources: true
       endpoints:
         - name: dev-server
