@@ -11,14 +11,14 @@ projects:
 components:
   - name: runtime
     container:
-      image: quay.io/devfile/universal-developer-image:latest
+      image: node:22
       memoryLimit: 4Gi
       mountSources: true
       env:
         - name: VITE_HTTPS
           value: "false"
         - name: VITE_DOMAIN
-          value: "admin-tugidoko-dev-server.192.168.2.6.nip.io"
+          value: "{{WORKSPACE_DOMAIN}}"
       endpoints:
         - name: dev-server
           targetPort: 5173
