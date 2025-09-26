@@ -29,24 +29,16 @@ components:
           value: 0.0.0.0
 
 commands:
-  - id: setup-user
-    exec:
-      component: runtime
-      commandLine: |
-        sudo sh -c 'echo "checode:x:1234:1234:checode user:/home/checode:/bin/bash" >> /etc/passwd' && \
-        sudo mkdir -p /home/checode && \
-        sudo chown $(id -u):$(id -g) /home/checode
-  - id: install-dependencies
+  - id: setup
     exec:
       component: runtime
       workingDir: /projects/tugidoko
-      commandLine: npm install
-      group:
-        kind: build
-        isDefault: false
+      commandLine: |
+        sudo sh -c 'echo "checode:x:1234:1234:checode user:/home/checode:/bin/bash" >> /etc/passwd' && \
+        sudo mkdir -p /home/checode && \
+        sudo chown $(id -u):$(id -g) /home/checode && \
+        npm install
 
 events:
-  preStart:
-    - setup-user
   postStart:
-    - install-dependencies
+    - setup-and-install
