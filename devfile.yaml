@@ -20,12 +20,13 @@ parent:
 components:
   - name: tugidoko-runtime
     container:
-      image: node:20-alpine
+      image: registry.redhat.io/ubi8/nodejs-20:latest
       memoryRequest: 1Gi
       memoryLimit: 4Gi
       cpuRequest: 500m
       cpuLimit: 2000m
       mountSources: true
+      workingDir: /projects/tugidoko
       endpoints:
         - name: dev-server
           targetPort: 5173
