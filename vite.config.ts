@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
     https: true,
+    host: '0.0.0.0',
     proxy: {
       '/amserver': {
         target: 'https://mastersso.kanagawa-u.ac.jp',
