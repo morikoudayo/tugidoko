@@ -21,6 +21,10 @@ components:
           exposure: public
           protocol: https
       env:
+        - name: USER
+          value: 'checode'
+        - name: HOME
+          value: '/home/checode'
         - name: VITE_HOST
           value: 0.0.0.0
 
