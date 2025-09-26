@@ -14,6 +14,11 @@ components:
       image: quay.io/devfile/universal-developer-image:latest
       memoryLimit: 4Gi
       mountSources: true
+      env:
+        - name: VITE_HTTPS
+          value: "false"
+        - name: VITE_DOMAIN
+          value: "admin-tugidoko-dev-server.192.168.2.6.nip.io"
       endpoints:
         - name: dev-server
           targetPort: 5173
