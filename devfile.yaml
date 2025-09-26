@@ -18,7 +18,7 @@ parent:
   registryUrl: "https://registry.devfile.io"
 
 components:
-  - name: runtime
+  - name: tugidoko-runtime
     container:
       image: node:20-alpine
       memoryRequest: 1Gi
