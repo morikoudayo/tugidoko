@@ -12,15 +12,14 @@ components:
   - name: runtime
     container:
       image: quay.io/devfile/universal-developer-image:latest
+      memoryLimit: 4Gi
+      cpuLimit: 2000m
       mountSources: true
       endpoints:
         - name: dev-server
           targetPort: 5173
           exposure: public
           protocol: https
-      env:
-        - name: VITE_HOST
-          value: 0.0.0.0
 
 commands:
   - id: install-dependencies
