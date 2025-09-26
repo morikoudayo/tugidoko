@@ -69,8 +69,12 @@ export function AfterLogin() {
 
     console.info('date updated');
 
+    let sessionActivated = false;
+
     async function updateDailyInfo() {
-      if (!testMode) await activateSession(auth.user);
+      if (!testMode) {
+        sessionActivated = await activateSession(auth.user);
+      }
       setSchedule(await getSchedule(testMode));
       setAbsenceCounts(await getAbsenceCounts(testMode));
     }
@@ -78,7 +82,7 @@ export function AfterLogin() {
     updateDailyInfo();
 
     return () => {
-      if (!testMode) deactivateSession();
+      if (!testMode && sessionActivated) deactivateSession();
     };
   }, [auth.user, date, testMode])
 
