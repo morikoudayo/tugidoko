@@ -1,46 +1,35 @@
 schemaVersion: 2.2.0
 metadata:
   name: tugidoko
-  displayName: "Tugidoko React TypeScript App"
-  description: "React TypeScript application with Vite build system"
-  version: "1.0.0"
-  tags:
-    - React
-    - TypeScript
-    - Vite
-    - Firebase
-    - Chakra UI
-  attributes:
-    controller.devfile.io/storage-type: per-workspace
 
 parent:
   id: nodejs
   registryUrl: "https://registry.devfile.io"
 
 components:
-  - name: tugidoko-runtime
+  - name: runtime
     container:
-      image: registry.redhat.io/ubi8/nodejs-20:latest
-      memoryRequest: 1Gi
-      memoryLimit: 4Gi
-      cpuRequest: 500m
-      cpuLimit: 2000m
       mountSources: true
       endpoints:
         - name: dev-server
           targetPort: 5173
           exposure: public
-          protocol: http
-        - name: preview
-          targetPort: 4173
-          exposure: public
-          protocol: http
-      command:
-        - /bin/sh
-        - -c
-        - "cd /projects/tugidoko && npm install && tail -f /dev/null"
+          protocol: https
+      env:
+        - name: VITE_HOST
+          value: 0.0.0.0
 
-  - name: git
-    volume:
-      size: 1Gi
+commands:
+  - id: install-dependencies
+    exec:
+      component: runtime
+      workingDir: /projects
+      commandLine: npm install
+      group:
+        kind: build
+        isDefault: false
+
+events:
+  postStart:
+    - install-dependencies
 
