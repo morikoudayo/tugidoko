@@ -1,0 +1,99 @@
+schemaVersion: 2.2.0
+metadata:
+  name: tugidoko
+  displayName: "Tugidoko React TypeScript App"
+  description: "React TypeScript application with Vite build system"
+  version: "1.0.0"
+  tags:
+    - React
+    - TypeScript
+    - Vite
+    - Firebase
+    - Chakra UI
+  attributes:
+    controller.devfile.io/storage-type: per-workspace
+
+parent:
+  id: nodejs
+  registryUrl: "https://registry.devfile.io"
+
+commands:
+  - id: install-dependencies
+    exec:
+      label: "Install dependencies"
+      component: runtime
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: npm install
+      group:
+        kind: build
+        isDefault: false
+
+  - id: dev-server
+    exec:
+      label: "Start dev server"
+      component: runtime
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: npm run dev
+      group:
+        kind: run
+        isDefault: true
+
+  - id: build
+    exec:
+      label: "Build application"
+      component: runtime
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: npm run build
+      group:
+        kind: build
+        isDefault: true
+
+  - id: lint
+    exec:
+      label: "Run ESLint"
+      component: runtime
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: npm run lint
+      group:
+        kind: test
+
+  - id: preview
+    exec:
+      label: "Preview production build"
+      component: runtime
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: npm run preview
+      group:
+        kind: run
+
+components:
+  - name: runtime
+    container:
+      image: node:20-alpine
+      memoryRequest: 1Gi
+      memoryLimit: 4Gi
+      cpuRequest: 500m
+      cpuLimit: 2000m
+      mountSources: true
+      endpoints:
+        - name: dev-server
+          targetPort: 5173
+          exposure: public
+          protocol: http
+        - name: preview
+          targetPort: 4173
+          exposure: public
+          protocol: http
+      env:
+        - name: NODE_ENV
+          value: development
+        - name: VITE_PORT
+          value: "5173"
+
+  - name: git
+    volume:
+      size: 1Gi
+
+events:
+  preStart:
+    - install-dependencies
