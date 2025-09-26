@@ -24,7 +24,9 @@ export async function getAbsenceCounts(test: boolean = false): Promise<AbsenceCo
 
   const absenceCounts = new Map<string, number>();
   Array.from(attendancesTable!.rows).forEach((row) => {
-    const className = row.children[3].textContent!.trim();
+    const classNameElement = row.children[3];
+    if (!classNameElement?.textContent) return;
+    const className = classNameElement.textContent.trim();
 
     const match = row.innerHTML.match(/\b\d{1,2}\/\d{1,2}\/\d{1,2}\/\d{1,2}\b/);
     const attendance = match![0].split('/')
