@@ -11,9 +11,7 @@ projects:
 components:
   - name: runtime
     container:
-      image: registry.access.redhat.com/ubi8/nodejs-18:1-32
-      args: ['tail', '-f', '/dev/null']
-      memoryLimit: 1024Mi
+      image: quay.io/devfile/universal-developer-image:latest
       mountSources: true
       endpoints:
         - name: dev-server
@@ -21,22 +19,16 @@ components:
           exposure: public
           protocol: https
       env:
-        - name: USER
-          value: 'checode'
-        - name: HOME
-          value: '/home/checode'
         - name: VITE_HOST
           value: 0.0.0.0
 
 commands:
-  - id: setup
+  - id: install-dependencies
     exec:
       component: runtime
-      commandLine: |
-        echo "checode:x:1234:1234:checode user:/home/checode:/bin/bash" >> /etc/passwd && \
-        mkdir -p /home/checode && \
-        chown $(id -u):$(id -g) /home/checode
+      workingDir: /projects/tugidoko
+      commandLine: npm install
 
 events:
   postStart:
-    - setup
+    - install-dependencies
