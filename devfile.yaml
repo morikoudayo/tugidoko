@@ -17,55 +17,6 @@ parent:
   id: nodejs
   registryUrl: "https://registry.devfile.io"
 
-commands:
-  - id: install-dependencies
-    exec:
-      label: "Install dependencies"
-      component: runtime
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: npm install
-      group:
-        kind: build
-        isDefault: false
-
-  - id: dev-server
-    exec:
-      label: "Start dev server"
-      component: runtime
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: npm run dev
-      group:
-        kind: run
-        isDefault: true
-
-  - id: build
-    exec:
-      label: "Build application"
-      component: runtime
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: npm run build
-      group:
-        kind: build
-        isDefault: true
-
-  - id: lint
-    exec:
-      label: "Run ESLint"
-      component: runtime
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: npm run lint
-      group:
-        kind: test
-
-  - id: preview
-    exec:
-      label: "Preview production build"
-      component: runtime
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: npm run preview
-      group:
-        kind: run
-
 components:
   - name: runtime
     container:
@@ -84,16 +35,12 @@ components:
           targetPort: 4173
           exposure: public
           protocol: http
-      env:
-        - name: NODE_ENV
-          value: development
-        - name: VITE_PORT
-          value: "5173"
+      command:
+        - /bin/sh
+        - -c
+        - "npm install && tail -f /dev/null"
 
   - name: git
     volume:
       size: 1Gi
 
-events:
-  preStart:
-    - install-dependencies
