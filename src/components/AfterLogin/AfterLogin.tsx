@@ -73,10 +73,13 @@ export function AfterLogin() {
       if (!testMode) await activateSession(auth.user);
       setSchedule(await getSchedule(testMode));
       setAbsenceCounts(await getAbsenceCounts(testMode));
-      if (!testMode) deactivateSession();
     }
 
     updateDailyInfo();
+
+    return () => {
+      if (!testMode) deactivateSession();
+    };
   }, [auth.user, date, testMode])
 
   /**
