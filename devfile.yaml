@@ -18,7 +18,8 @@ components:
         - name: dev-server
           targetPort: 5173
           exposure: public
-          protocol: https
+          protocol: http
+          secure: true
 
 commands:
   - id: install-dependencies
