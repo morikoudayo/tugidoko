@@ -2,12 +2,20 @@ schemaVersion: 2.2.0
 metadata:
   name: tugidoko
 
+projects:
+  - name: tugidoko
+    git:
+      remotes:
+        origin: https://github.com/m-dev672/tugidoko.git
+
 parent:
   id: nodejs
   registryUrl: "https://registry.devfile.io"
 
 components:
   - name: runtime
+    attributes:
+      merge-parent: true
     container:
       mountSources: true
       endpoints:
@@ -23,7 +31,7 @@ commands:
   - id: install-dependencies
     exec:
       component: runtime
-      workingDir: /projects
+      workingDir: /projects/tugidoko
       commandLine: npm install
       group:
         kind: build
