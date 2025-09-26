@@ -13,7 +13,6 @@ components:
     container:
       image: quay.io/devfile/universal-developer-image:latest
       memoryLimit: 4Gi
-      cpuLimit: 2000m
       mountSources: true
       endpoints:
         - name: dev-server
