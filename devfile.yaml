@@ -15,7 +15,7 @@ components:
     attributes:
       controller.devfile.io/merge-contribution: true
     container:
-      image: quay.io/devfile/universal-developer-image:ubi8-latest
+      image: quay.io/devfile/universal-developer-image:latest
       memoryLimit: 4Gi
       mountSources: true
       env:
