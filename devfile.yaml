@@ -12,8 +12,6 @@ projects:
 
 components:
   - name: che-code
-    attributes:
-      controller.devfile.io/merge-contribution: true
     container:
       image: quay.io/devfile/universal-developer-image:ubi8-latest
       memoryLimit: 2Gi
