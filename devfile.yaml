@@ -20,8 +20,6 @@ components:
       env:
         - name: VITE_HTTPS
           value: "false"
-        - name: VITE_DOMAIN
-          value: "{{WORKSPACE_DOMAIN}}"
       endpoints:
         - name: dev-server
           targetPort: 5173
@@ -39,7 +37,9 @@ commands:
     exec:
       component: runtime
       workingDir: /projects/tugidoko
-      commandLine: npm run dev
+      commandLine: |
+        export VITE_DOMAIN=$(echo $CHE_API_EXTERNAL | cut -d'/' -f3)
+        npm run dev
 
 events:
   postStart:
