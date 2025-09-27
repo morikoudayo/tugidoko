@@ -11,11 +11,18 @@ projects:
         origin: https://github.com/m-dev672/tugidoko.git
 
 components:
+  - name: che-code
+    attributes:
+      controller.devfile.io/merge-contribution: true
+    container:
+      image: quay.io/devfile/universal-developer-image:ubi8-latest
+      memoryLimit: 2Gi
+      mountSources: true
   - name: runtime
     container:
       image: node:22
       command: ['sh', '-c', 'tail -f /dev/null']
-      memoryLimit: 4Gi
+      memoryLimit: 2Gi
       mountSources: true
       env:
         - name: VITE_HTTPS
