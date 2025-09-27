@@ -36,8 +36,7 @@ commands:
   - id: install-dependencies
     exec:
       component: runtime
-      workingDir: /projects/tugidoko
-      commandLine: npm install
+      commandLine: cd /projects/tugidoko && npm install
   - id: run-dev-server
     exec:
       component: runtime
