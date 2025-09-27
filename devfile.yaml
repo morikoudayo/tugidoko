@@ -11,20 +11,16 @@ projects:
         origin: https://github.com/m-dev672/tugidoko.git
 
 components:
-  - name: che-code
-    container:
-      image: quay.io/devfile/universal-developer-image:ubi8-latest
-      memoryLimit: 2Gi
-      mountSources: true
   - name: runtime
     container:
-      image: registry.access.redhat.com/ubi9/nodejs-22:9.6
-      command: ['sh', '-c', 'tail -f /dev/null']
-      memoryLimit: 2Gi
+      image: quay.io/devfile/universal-developer-image:ubi8-latest
+      memoryLimit: 4Gi
       mountSources: true
       env:
         - name: VITE_HTTPS
           value: "false"
+        - name: VITE_DOMAIN
+          value: "{{WORKSPACE_DOMAIN}}"
       endpoints:
         - name: dev-server
           targetPort: 5173
@@ -33,11 +29,13 @@ components:
           secure: true
 
 commands:
-  - id: run-dev-server
+  - id: install-dependencies
     exec:
       component: runtime
       workingDir: /projects/tugidoko
       commandLine: |
-        npm install
-        export VITE_DOMAIN=$(echo $CHE_API_EXTERNAL | cut -d'/' -f3)
-        npm run dev
+        . $NVM_DIR/nvm.sh && nvm install && nvm use && npm install
+
+events:
+  postStart:
+    - install-dependencies
