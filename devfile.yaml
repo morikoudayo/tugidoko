@@ -18,7 +18,7 @@ components:
       mountSources: true
   - name: runtime
     container:
-      image: node:22
+      image: registry.access.redhat.com/ubi9/nodejs-22:9.6
       command: ['sh', '-c', 'tail -f /dev/null']
       memoryLimit: 2Gi
       mountSources: true
