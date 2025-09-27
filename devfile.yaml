@@ -12,6 +12,7 @@ components:
   - name: runtime
     container:
       image: registry.access.redhat.com/ubi9/nodejs-22:9.6
+      command: ['sh', '-c', 'tail -f /dev/null']
       memoryLimit: 4Gi
       mountSources: true
       env:
