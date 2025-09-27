@@ -11,7 +11,7 @@ projects:
 components:
   - name: runtime
     container:
-      image: registry.redhat.io/ubi9/nodejs-22:latest
+      image: registry.access.redhat.com/ubi9/nodejs-22:9.6
       memoryLimit: 4Gi
       mountSources: true
       env:
