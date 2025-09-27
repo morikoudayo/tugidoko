@@ -16,6 +16,8 @@ components:
       image: quay.io/devfile/universal-developer-image:ubi8-latest
       memoryLimit: 4Gi
       mountSources: true
+      attributes:
+        controller.devfile.io/merge-contribution: true
       env:
         - name: VITE_HTTPS
           value: "false"
