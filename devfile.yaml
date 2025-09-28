@@ -16,4 +16,4 @@ commands:
     exec:
       commandLine: |
         . $NVM_DIR/nvm.sh && nvm install && nvm use && cd /projects/tugidoko && npm install &&
-        export VITE_HTTPS="false" && export VITE_DOMAIN="" && npm run dev
+        export VITE_HTTPS="false" && export VITE_DOMAIN="${CHE_DASHBOARD_URL/https:\/\/dashboard/}" && npm run dev
