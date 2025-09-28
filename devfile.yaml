@@ -11,8 +11,10 @@ components:
           protocol: http
           secure: true
           targetPort: 5173
+
 commands:
   - id: server-start
+    component: devtools
     exec:
       commandLine: |
         . $NVM_DIR/nvm.sh && nvm install && nvm use && cd /projects/tugidoko && npm install &&
