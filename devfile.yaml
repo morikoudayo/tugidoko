@@ -10,7 +10,7 @@ components:
           exposure: public
           protocol: http
           secure: true
-          targetPort: 5173
+          targetPort: 5174
 
 commands:
   - id: server-start
