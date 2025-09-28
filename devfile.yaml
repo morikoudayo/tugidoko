@@ -12,9 +12,8 @@ projects:
 
 components:
   - name: runtime
-    attributes:
-      controller.devfile.io/merge-contribution: true
     container:
+      image: quay.io/devfile/universal-developer-image:latest
       memoryLimit: 4Gi
       mountSources: true
       env:
@@ -30,13 +29,9 @@ components:
           secure: true
 
 commands:
-  - id: install-dependencies
+  - id: dev
     exec:
       component: runtime
       workingDir: /projects/tugidoko
       commandLine: |
-        . $NVM_DIR/nvm.sh && nvm install && nvm use && npm install
-
-events:
-  postStart:
-    - install-dependencies
+        . $NVM_DIR/nvm.sh && nvm install && nvm use && npm install && npm run dev
