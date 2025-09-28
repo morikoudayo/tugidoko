@@ -1,50 +1,19 @@
 schemaVersion: 2.2.0
 metadata:
   name: tugidoko
-  attributes:
-    controller.devfile.io/storage-type: per-workspace
-
-projects:
-  - name: tugidoko
-    git:
-      remotes:
-        origin: https://github.com/m-dev672/tugidoko.git
-
 components:
-  - name: che-editor
-    attributes:
-      controller.devfile.io/container-contribution: "true"
-    container:
-      mountSources: true
-      image: quay.io/devfile/universal-developer-image:latest
-      volumeMounts:
-        - name: checode
-          path: /checode
-      memoryLimit: 512Mi
-
-  - name: runtime
-    attributes:
-      controller.devfile.io/merge-contribution: "true"
+  - name: devtools
     container:
       image: quay.io/devfile/universal-developer-image:latest
-      memoryLimit: 4Gi
-      mountSources: true
-      env:
-        - name: VITE_HTTPS
-          value: "false"
-        - name: VITE_DOMAIN
-          value: "{{WORKSPACE_DOMAIN}}"
       endpoints:
         - name: dev-server
-          targetPort: 5173
           exposure: public
           protocol: http
           secure: true
-
+          targetPort: 5173
 commands:
-  - id: dev
+  - id: server-start
     exec:
-      component: runtime
-      workingDir: /projects/tugidoko
       commandLine: |
-        . $NVM_DIR/nvm.sh && nvm install && nvm use && npm install && npm run dev
+        . $NVM_DIR/nvm.sh && nvm install && nvm use && cd /projects/tugidoko && npm install &&
+        export VITE_HTTPS="false" && export VITE_DOMAIN="" && npm run dev
