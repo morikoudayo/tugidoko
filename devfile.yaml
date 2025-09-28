@@ -11,7 +11,20 @@ projects:
         origin: https://github.com/m-dev672/tugidoko.git
 
 components:
+  - name: che-editor
+    attributes:
+      controller.devfile.io/container-contribution: "true"
+    container:
+      mountSources: true
+      image: quay.io/devfile/universal-developer-image:latest
+      volumeMounts:
+        - name: checode
+          path: /checode
+      memoryLimit: 512Mi
+
   - name: runtime
+    attributes:
+      controller.devfile.io/merge-contribution: "true"
     container:
       image: quay.io/devfile/universal-developer-image:latest
       memoryLimit: 4Gi
