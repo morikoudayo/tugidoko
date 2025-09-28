@@ -31,6 +31,7 @@ export default defineConfig({
     https: process.env.VITE_HTTPS === 'true' ? {} : undefined,
     host: '0.0.0.0',
     allowedHosts: [LOCAL_DOMAIN],
+    port: 3000,
     proxy: {
       '/amserver': createProxyConfig('https://mastersso.kanagawa-u.ac.jp', 'mastersso.kanagawa-u.ac.jp'),
       '/campusweb': createProxyConfig('https://webstation.kanagawa-u.ac.jp', 'webstation.kanagawa-u.ac.jp'),

@@ -10,7 +10,7 @@ components:
           exposure: public
           protocol: http
           secure: true
-          targetPort: 5174
+          targetPort: 3000
 
 commands:
   - id: server-start
@@ -18,4 +18,4 @@ commands:
       component: devtools
       commandLine: |
         . $NVM_DIR/nvm.sh && nvm install && nvm use && cd /projects/tugidoko && npm install &&
-        export VITE_HTTPS="false" && export VITE_DOMAIN="${CHE_DASHBOARD_URL/https:\/\/dashboard/}" && npm run dev
+        export VITE_HTTPS="false" && export VITE_DOMAIN=".$(echo $CHE_DASHBOARD_URL | cut -d'/' -f3)" && npm run dev
