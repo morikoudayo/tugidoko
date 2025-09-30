@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useAuth } from '@/hook/useAuth';
 import { Button, Center, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
-import { getSchedule, type ClassData, type Schedule } from './getSchedule';
+import { getSchedule, type Schedule } from './getSchedule';
 import { getNextPeriod, NO_MORE_CLASSES } from './getNextPeriod';
 import { activateSession, deactivateSession } from '@/context/Auth/authCookie';
 import { getAbsenceCounts, type AbsenceCounts } from './getAbsenceCount';
@@ -28,8 +28,6 @@ export function AfterLogin() {
   const [schedule, setSchedule] = useState<Schedule>(new Map())
   const [absenceCounts, setAbsenceCounts] = useState<AbsenceCounts>(new Map())
 
-  const [nextClassData, setNextClassData] = useState<ClassData>()
-  const [absenceCount, setAbsenceCount] = useState<number | undefined>(undefined)
   const [noMoreClasses, setNoMoreClasses] = useState<boolean>(false)
 
   /**
@@ -44,21 +42,19 @@ export function AfterLogin() {
   * 日付と時限を60秒ごとに取得。
   */
   useEffect(() => {
-    async function updateInfo(): Promise<void> {
+    if (testMode) return;
+
+    function updateInfo(): void {
       setDate(new Date().getDate())
       setNextPeriod(getNextPeriod())
     }
 
-    if (!testMode) {
-      updateInfo();
-      const interval = setInterval(() => {
-        updateInfo();
-      }, 60 * 1000);
+    updateInfo();
+    const interval = setInterval(updateInfo, 60 * 1000);
 
-      return () => {
-        clearInterval(interval);
-      };
-    }
+    return () => {
+      clearInterval(interval);
+    };
   }, [testMode])
 
   /**
@@ -87,12 +83,12 @@ export function AfterLogin() {
   }, [auth.user, date, testMode])
 
   /**
-  * 次の授業の情報を取得。
+  * 次の授業の情報を計算（derived state）
   */
-  useEffect(() => {
-    if (testMode && testPeriod === undefined) return;
-    if (!testMode && nextPeriod === undefined) return;
-    if (schedule.size === 0) return;
+  const nextClassData = useMemo(() => {
+    if (testMode && testPeriod === undefined) return undefined;
+    if (!testMode && nextPeriod === undefined) return undefined;
+    if (schedule.size === 0) return undefined;
 
     console.info('next period or schedule updated')
 
@@ -105,22 +101,22 @@ export function AfterLogin() {
 
     if (nextScheduledPeriod == NO_MORE_CLASSES) {
       setNoMoreClasses(true)
-      return
+      return undefined
     } else {
       setNoMoreClasses(false)
     }
 
-    setNextClassData(schedule.get(nextScheduledPeriod))
+    return schedule.get(nextScheduledPeriod)
   }, [nextPeriod, schedule, testMode, testPeriod])
 
   /**
-  * 次の授業の欠席回数を取得。
+  * 次の授業の欠席回数を計算（derived state）
   */
-  useEffect(() => {
-    if (nextClassData === undefined) return;
+  const absenceCount = useMemo(() => {
+    if (nextClassData === undefined) return undefined;
     console.info('absence counts updated')
 
-    setAbsenceCount(absenceCounts.get(nextClassData.className))
+    return absenceCounts.get(nextClassData.className)
   }, [nextClassData, absenceCounts])
 
   return (
