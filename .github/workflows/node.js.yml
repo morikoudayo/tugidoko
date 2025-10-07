@@ -55,15 +55,9 @@ jobs:
       
     - name: Run Socket security scan
       run: |
-        SCAN_ID=$(npx socket scan create \
+        npx socket scan create \
           --token ${{ secrets.SOCKET_TOKEN }} \
           --org snowing \
-          --no-banner \
-          --no-spinner \
-          --json 2>/dev/null | jq -r '.id')
-        
-        npx socket scan report $SCAN_ID \
-          --token ${{ secrets.SOCKET_TOKEN }} \
-          --org snowing \
+          --report \
           --no-banner \
           --no-spinner
