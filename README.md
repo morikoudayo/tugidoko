@@ -1,5 +1,5 @@
-Current Image: <!-- DEPLOY_IMAGE -->e6ae4a0ded63<!-- /DEPLOY_IMAGE --></br>
-Image Digest: <!-- DEPLOY_DIGEST -->e6ae4a0ded63<!-- /DEPLOY_DIGEST -->
+Current Image: <!-- DEPLOY_IMAGE -->nginx-app:c80a3f26286352a773c5a3bd5c4f76b51e2271b1<!-- /DEPLOY_IMAGE --></br>
+Image Digest: <!-- DEPLOY_DIGEST -->sha256:e6ae4a0ded634fd3293da464864da5850733053c8bb0ca82dd1adbe1add32d1e<!-- /DEPLOY_DIGEST -->
 
 # 神奈川大学の学生向け授業・欠席情報一括表示Webアプリ「つぎどこ」
 
