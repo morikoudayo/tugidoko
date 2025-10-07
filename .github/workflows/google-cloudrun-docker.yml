@@ -35,7 +35,7 @@ on:
       - main
 
 env:
-  PROJECT_ID: 'tugidoko' # TODO: update to your Google Cloud project ID
+  PROJECT_ID: 'tugidoko-dev' # TODO: update to your Google Cloud project ID
   REGION: 'asia-northeast1' # TODO: update to your region
   SERVICE: 'nginx-app' # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: 'projects/109380428695/locations/global/workloadIdentityPools/github-pool/providers/github-provider' # TODO: update to your workload identity provider
