@@ -61,8 +61,8 @@ jobs:
       - name: 'Update README'
         run: |-
           # Update README with image info and digest
-          sed -i "s|<!-- DEPLOY_IMAGE -->.*<!-- /DEPLOY_IMAGE -->|<!-- DEPLOY_IMAGE -->![Badge](https://img.shields.io/badge/Image%20Name-${{ steps.image-info.outputs.image_name_escaped }}-blue?logo=docker)<!-- /DEPLOY_IMAGE -->|g" README.md
-          sed -i "s|<!-- DEPLOY_DIGEST -->.*<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->![Badge](https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_escaped }}-green?logo=docker)<!-- /DEPLOY_DIGEST -->|g" README.md
+          sed -i "s|<!-- DEPLOY_IMAGE -->.*<!-- /DEPLOY_IMAGE -->|<!-- DEPLOY_IMAGE -->\n![Badge](https://img.shields.io/badge/Image%20Name-${{ steps.image-info.outputs.image_name_escaped }}-blue?logo=docker)\n<!-- /DEPLOY_IMAGE -->|g" README.md
+          sed -i "s|<!-- DEPLOY_DIGEST -->.*<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n![Badge](https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_escaped }}-green?logo=docker)\n<!-- /DEPLOY_DIGEST -->|g" README.md
 
       - name: 'Commit changes'
         run: |-
@@ -70,4 +70,4 @@ jobs:
           git config user.email github-actions@github.com
           git add README.md
           git diff --quiet && git diff --staged --quiet || \
-            (git commit -m "chore: update deployment info [skip ci]" && git push)
+            (git commit -m "chore: update deployment info [skip ci cd]" && git push)
