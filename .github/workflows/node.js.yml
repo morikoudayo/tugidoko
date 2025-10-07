@@ -54,4 +54,4 @@ jobs:
       run: npm audit --audit-level=moderate
       
     - name: Run Socket security scan
-      run: npx socket scan
+      run: npx socket scan report --token ${{ secrets.SOCKET_TOKEN }} --org snowing
