@@ -1,4 +1,4 @@
-Current Image: e6ae4a0ded63<!-- /DEPLOY_IMAGE -->
+Current Image: e6ae4a0ded63<!-- /DEPLOY_IMAGE --></br>
 Image Digest: e6ae4a0ded63<!-- /DEPLOY_DIGEST -->
 
 # 神奈川大学の学生向け授業・欠席情報一括表示Webアプリ「つぎどこ」
