@@ -85,6 +85,7 @@ jobs:
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
+          project_id: '${{ env.PROJECT_ID }}'
           # NOTE: If using a pre-built image, update the image name below:
 
           image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }}'
