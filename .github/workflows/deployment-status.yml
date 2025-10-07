@@ -41,17 +41,19 @@ jobs:
             --format='value(spec.template.spec.containers[0].image)')
           echo "image=${IMAGE}" >> $GITHUB_OUTPUT
           
+          # Extract just the image name and tag (e.g., nginx-app:latest)
+          IMAGE_NAME=$(echo "${IMAGE}" | sed 's|.*/||')
+          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+          
           DIGEST=$(gcloud container images describe "${IMAGE}" \
             --format='value(image_summary.digest)')
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
-          
-          SHORT_DIGEST=$(echo "${DIGEST}" | cut -c 8-19)
-          echo "short_digest=${SHORT_DIGEST}" >> $GITHUB_OUTPUT
 
       - name: 'Update README'
         run: |-
-          sed -i "s|<!-- DEPLOY_IMAGE -->|${{ steps.image-info.outputs.short_digest }}|g" README.md
-          sed -i "s|<!-- DEPLOY_DIGEST -->|${{ steps.image-info.outputs.short_digest }}|g" README.md
+          # Update README with image info and digest
+          sed -i "s|<!-- DEPLOY_IMAGE -->.*<!-- /DEPLOY_IMAGE -->|<!-- DEPLOY_IMAGE -->${{ steps.image-info.outputs.image_name }}<!-- /DEPLOY_IMAGE -->|g" README.md
+          sed -i "s|<!-- DEPLOY_DIGEST -->.*<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->${{ steps.image-info.outputs.digest }}<!-- /DEPLOY_DIGEST -->|g" README.md
 
       - name: 'Commit changes'
         run: |-
