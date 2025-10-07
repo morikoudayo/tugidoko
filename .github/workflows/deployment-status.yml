@@ -48,12 +48,16 @@ jobs:
           DIGEST=$(gcloud container images describe "${IMAGE}" \
             --format='value(image_summary.digest)')
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+          
+          # Remove sha256: prefix from digest
+          DIGEST_WITHOUT_PREFIX=$(echo "${DIGEST}" | sed 's/^sha256://')
+          echo "digest_without_prefix=${DIGEST_WITHOUT_PREFIX}" >> $GITHUB_OUTPUT
 
       - name: 'Update README'
         run: |-
           # Update README with image info and digest
           sed -i "s|<!-- DEPLOY_IMAGE -->.*<!-- /DEPLOY_IMAGE -->|<!-- DEPLOY_IMAGE -->${{ steps.image-info.outputs.image_name }}<!-- /DEPLOY_IMAGE -->|g" README.md
-          sed -i "s|<!-- DEPLOY_DIGEST -->.*<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->${{ steps.image-info.outputs.digest }}<!-- /DEPLOY_DIGEST -->|g" README.md
+          sed -i "s|<!-- DEPLOY_DIGEST -->.*<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->${{ steps.image-info.outputs.digest_without_prefix }}<!-- /DEPLOY_DIGEST -->|g" README.md
 
       - name: 'Commit changes'
         run: |-
