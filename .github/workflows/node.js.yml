@@ -60,7 +60,7 @@ jobs:
           --org snowing \
           --no-banner \
           --no-spinner \
-          --json | jq -r '.id')
+          --json 2>/dev/null | jq -r '.id')
         
         npx socket scan report $SCAN_ID \
           --token ${{ secrets.SOCKET_TOKEN }} \
