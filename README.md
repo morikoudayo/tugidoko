@@ -1,5 +1,5 @@
-Current Image: <!-- DEPLOY_IMAGE -->nginx-app:17221e0d307415b5ca6ee22cb629b9257139e6e3<!-- /DEPLOY_IMAGE --></br>
-Image Digest: <!-- DEPLOY_DIGEST -->5b30c3acb43e31b6c4c38f2476aef0d37be8063586cf1ba74b2c2131f04f4520<!-- /DEPLOY_DIGEST -->
+Current Image: <!-- DEPLOY_IMAGE -->![Badge](https://img.shields.io/badge/Image%20Name-nginx--app:17221e0d307415b5ca6ee22cb629b9257139e6e3-blue?logo=docker)<!-- /DEPLOY_IMAGE --></br>
+Image Digest: <!-- DEPLOY_DIGEST -->![Badge](https://img.shields.io/badge/Image%20Digest-5b30c3acb43e31b6c4c38f2476aef0d37be8063586cf1ba74b2c2131f04f4520-green?logo=docker)<!-- /DEPLOY_DIGEST -->
 
 # 神奈川大学の学生向け授業・欠席情報一括表示Webアプリ「つぎどこ」
 
