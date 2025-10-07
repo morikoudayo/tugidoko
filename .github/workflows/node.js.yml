@@ -54,10 +54,12 @@ jobs:
       run: npm audit --audit-level=moderate
       
     - name: Run Socket security scan
+      env:
+        SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_TOKEN }}
       run: |
-        npx socket scan create \
-          --token ${{ secrets.SOCKET_TOKEN }} \
+        npx socket@latest scan create . \
           --org snowing \
           --report \
           --no-banner \
-          --no-spinner
+          --no-spinner \
+          --no-interactive
