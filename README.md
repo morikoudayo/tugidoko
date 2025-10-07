@@ -1,4 +1,6 @@
-5336fc59-d1c9-478d-8433-9f66ceb9fce5
+Current Image: <!-- DEPLOY_IMAGE --><!-- /DEPLOY_IMAGE -->
+Image Digest: <!-- DEPLOY_DIGEST --><!-- /DEPLOY_DIGEST -->
+
 # 神奈川大学の学生向け授業・欠席情報一括表示Webアプリ「つぎどこ」
 
 ## 概要

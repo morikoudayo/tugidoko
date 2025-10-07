@@ -1,0 +1,62 @@
+name: 'Update README with deployment info'
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: 'tugidoko-dev'
+  REGION: 'asia-northeast1'
+  SERVICE: 'nginx-app'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/109380428695/locations/global/workloadIdentityPools/github-pool/providers/github-provider' # TODO: update to your workload identity provider
+
+jobs:
+  update-readme:
+    runs-on: 'ubuntu-latest'
+
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332'
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2'
+        with:
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@f0990588f1e5b5af6827153b93673613abdc6ec7'
+      
+      - name: 'Get Cloud Run image info'
+        id: 'image-info'
+        run: |-
+          IMAGE=$(gcloud run services describe "${{ env.SERVICE }}" \
+            --region="${{ env.REGION }}" \
+            --project="${{ env.PROJECT_ID }}" \
+            --format='value(spec.template.spec.containers[0].image)')
+          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
+          
+          DIGEST=$(gcloud container images describe "${IMAGE}" \
+            --format='value(image_summary.digest)')
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+          
+          SHORT_DIGEST=$(echo "${DIGEST}" | cut -c 8-19)
+          echo "short_digest=${SHORT_DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: 'Update README'
+        run: |-
+          sed -i "s|<!-- DEPLOY_IMAGE -->|${{ steps.image-info.outputs.short_digest }}|g" README.md
+          sed -i "s|<!-- DEPLOY_DIGEST -->|${{ steps.image-info.outputs.short_digest }}|g" README.md
+
+      - name: 'Commit changes'
+        run: |-
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || \
+            (git commit -m "chore: update deployment info [skip ci]" && git push)
