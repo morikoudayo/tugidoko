@@ -1,5 +1,5 @@
 <!-- DEPLOY_COMMIT -->
-![Badge](https://img.shields.io/badge/Image%20Name-nginx--app:e0e524f6f55e1f29a5ddbb3541c3aef83ea5c7d7-blue?logo=docker)
+![Badge](https://img.shields.io/badge/Commit-7d47136-blue?logo=github)
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
 ![Badge](https://img.shields.io/badge/Image%20Digest-0d5bb97-green?logo=docker)
