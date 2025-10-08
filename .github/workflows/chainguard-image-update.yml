@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332'
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -78,11 +80,7 @@ jobs:
       - name: 'Trigger rebuild if update needed'
         if: steps.check-update.outputs.update_needed == 'true'
         run: |-
-          git commit --allow-empty -m "chore: trigger rebuild for chainguard nginx update
-
-          Chainguard nginx image updated to: ${{ steps.check-update.outputs.latest_digest }}
-          
-          [rebuild]"
+          git commit --allow-empty -m "chore: trigger rebuild for chainguard nginx update"
           git push
 
       - name: 'Log result'
