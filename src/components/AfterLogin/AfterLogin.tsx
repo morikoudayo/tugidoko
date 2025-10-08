@@ -31,19 +31,9 @@ export function AfterLogin() {
   const [noMoreClasses, setNoMoreClasses] = useState<boolean>(false)
 
   /**
-  * テスト用ステート
-  */
-  const [testMode, setTestMode] = useState(false);
-  const [testPeriod, setTestPeriod] = useState(0);
-  (window as Window & { setTestMode?: typeof setTestMode }).setTestMode = setTestMode;
-  (window as Window & { setTestPeriod?: typeof setTestPeriod }).setTestPeriod = setTestPeriod;
-
-  /**
   * 日付と時限を60秒ごとに取得。
   */
   useEffect(() => {
-    if (testMode) return;
-
     function updateInfo(): void {
       setDate(new Date().getDate())
       setNextPeriod(getNextPeriod())
@@ -55,7 +45,7 @@ export function AfterLogin() {
     return () => {
       clearInterval(interval);
     };
-  }, [testMode])
+  }, [])
 
   /**
   * 日によって変わる情報（開講情報、欠席回数のテーブル）を取得。
@@ -68,31 +58,28 @@ export function AfterLogin() {
     let sessionActivated = false;
 
     async function updateDailyInfo() {
-      if (!testMode) {
-        sessionActivated = await activateSession(auth.user);
-      }
-      setSchedule(await getSchedule(testMode));
-      setAbsenceCounts(await getAbsenceCounts(testMode));
+      sessionActivated = await activateSession(auth.user);
+      setSchedule(await getSchedule());
+      setAbsenceCounts(await getAbsenceCounts());
     }
 
     updateDailyInfo();
 
     return () => {
-      if (!testMode && sessionActivated) deactivateSession();
+      if (sessionActivated) deactivateSession();
     };
-  }, [auth.user, date, testMode])
+  }, [auth.user, date])
 
   /**
   * 次の授業の情報を計算（derived state）
   */
   const nextClassData = useMemo(() => {
-    if (testMode && testPeriod === undefined) return undefined;
-    if (!testMode && nextPeriod === undefined) return undefined;
+    if (nextPeriod === undefined) return undefined;
     if (schedule.size === 0) return undefined;
 
     console.info('next period or schedule updated')
 
-    let nextScheduledPeriod = testMode ? testPeriod : nextPeriod!
+    let nextScheduledPeriod = nextPeriod
     for (; ; nextScheduledPeriod++) {
       if (schedule.has(nextScheduledPeriod)) {
         break;
@@ -107,7 +94,7 @@ export function AfterLogin() {
     }
 
     return schedule.get(nextScheduledPeriod)
-  }, [nextPeriod, schedule, testMode, testPeriod])
+  }, [nextPeriod, schedule])
 
   /**
   * 次の授業の欠席回数を計算（derived state）

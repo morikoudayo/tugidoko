@@ -27,13 +27,8 @@ function extractClassDataContent(classElement: Element): string {
 /**
  * スケジュール情報を学内ポータルから取得してパースする
  */
-export async function getSchedule(test: boolean = false): Promise<Schedule> {
-  let response: Response
-  if (test) {
-    response = await fetch('/schedule.html')
-  } else {
-    response = await fetch('/campusweb/portal.do?page=main')
-  }
+export async function getSchedule(): Promise<Schedule> {
+  const response = await fetch('/campusweb/portal.do?page=main')
 
   const html = await response.text()
 
