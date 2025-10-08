@@ -41,27 +41,18 @@ jobs:
             --format='value(spec.template.spec.containers[0].image)')
           echo "image=${IMAGE}" >> $GITHUB_OUTPUT
           
-          # Extract just the image name and tag (e.g., nginx-app:latest)
-          IMAGE_NAME=$(echo "${IMAGE}" | sed 's|.*/||')
-          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
-          
-          IMAGE_NAME_ESCAPED=$(echo "${IMAGE_NAME}" | sed 's/-/--/g')
-          echo "image_name_escaped=${IMAGE_NAME_ESCAPED}" >> $GITHUB_OUTPUT
-          
           DIGEST=$(gcloud container images describe "${IMAGE}" \
             --format='value(image_summary.digest)')
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
           
-          DIGEST_WITHOUT_PREFIX=$(echo "${DIGEST}" | sed 's/^sha256://')
-          echo "digest_without_prefix=${DIGEST_WITHOUT_PREFIX}" >> $GITHUB_OUTPUT
+          DIGEST_SHORT=$(echo "${DIGEST}" | sed 's/^sha256://' | cut -c1-7)
+          echo "digest_short=${DIGEST_SHORT}" >> $GITHUB_OUTPUT
           
-          DIGEST_ESCAPED=$(echo "${DIGEST_WITHOUT_PREFIX}" | sed 's/-/--/g')
-          echo "digest_escaped=${DIGEST_ESCAPED}" >> $GITHUB_OUTPUT
+          echo "Full digest: ${DIGEST}"
 
       - name: 'Update README'
         run: |-
-          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_IMAGE -->.*?<!-- /DEPLOY_IMAGE -->|<!-- DEPLOY_IMAGE -->\n![Badge](https://img.shields.io/badge/Image%20Name-${{ steps.image-info.outputs.image_name_escaped }}-blue?logo=docker)\n<!-- /DEPLOY_IMAGE -->|gs' README.md
-          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n![Badge](https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_escaped }}-green?logo=docker)\n<!-- /DEPLOY_DIGEST -->|gs' README.md
+          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n![Badge](https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_short }}-green?logo=docker)\n<!-- /DEPLOY_DIGEST -->|gs' README.md
 
       - name: 'Commit changes'
         run: |-

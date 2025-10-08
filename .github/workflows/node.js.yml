@@ -38,6 +38,8 @@ jobs:
     name: Security Scan
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip ci cd]')"
+    permissions:
+      contents: 'write'
     
     steps:
     - name: Checkout code
@@ -53,9 +55,12 @@ jobs:
       run: npm ci
       
     - name: Run npm audit
+      id: npm-audit
       run: npm audit --audit-level=moderate
+      continue-on-error: true
       
     - name: Run Socket security scan
+      id: socket-scan
       env:
         SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_TOKEN }}
       run: |
@@ -65,3 +70,29 @@ jobs:
           --no-banner \
           --no-spinner \
           --no-interactive
+      continue-on-error: true
+
+    - name: Determine security status
+      id: security-status
+      run: |
+        if [[ "${{ steps.npm-audit.outcome }}" == "failure" || "${{ steps.socket-scan.outcome }}" == "failure" ]]; then
+          echo "status=failed" >> $GITHUB_OUTPUT
+          echo "message=vulnerabilities%20found" >> $GITHUB_OUTPUT
+          echo "color=red" >> $GITHUB_OUTPUT
+        else
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "message=success" >> $GITHUB_OUTPUT
+          echo "color=green" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Update security badge
+      run: |
+        perl -i -pe 'BEGIN{undef $/;} s|<!-- SECURITY_CHECK -->.*?<!-- /SECURITY_CHECK -->|<!-- SECURITY_CHECK -->\n![Badge](https://img.shields.io/badge/Security%20Check-${{ steps.security-status.outputs.message }}-${{ steps.security-status.outputs.color }}?logo=shield)\n<!-- /SECURITY_CHECK -->|gs' README.md
+
+    - name: Commit security badge update
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add README.md
+        git diff --quiet && git diff --staged --quiet || \
+          (git commit -m "chore: update security check badge [skip ci]" && git push)

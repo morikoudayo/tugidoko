@@ -46,7 +46,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip cd]') && !contains(github.event.head_commit.message, '[skip ci cd]')"
 
     permissions:
-      contents: 'read'
+      contents: 'write'
       id-token: 'write'
 
     steps:
@@ -95,3 +95,25 @@ jobs:
         run: |2-
 
           echo ${{ steps.deploy.outputs.url }}
+
+      - name: 'Get commit info'
+        id: 'commit-info'
+        run: |-
+          # Extract first 7 characters of commit hash for badge display
+          COMMIT_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "commit_short=${COMMIT_SHORT}" >> $GITHUB_OUTPUT
+          
+          echo "Full commit hash: ${{ github.sha }}"
+
+      - name: 'Update README with commit info'
+        run: |-
+          # Update README with commit info
+          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_COMMIT -->.*?<!-- /DEPLOY_COMMIT -->|<!-- DEPLOY_COMMIT -->\n![Badge](https://img.shields.io/badge/Commit-${{ steps.commit-info.outputs.commit_short }}-blue?logo=github)\n<!-- /DEPLOY_COMMIT -->|gs' README.md
+
+      - name: 'Commit README changes'
+        run: |-
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || \
+            (git commit -m "chore: update commit info [skip ci cd]" && git push)
