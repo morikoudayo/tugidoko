@@ -2,19 +2,23 @@ import { defineConfig, loadEnv } from "vite"
 import react from "@vitejs/plugin-react"
 import tsconfigPaths from "vite-tsconfig-paths"
 import basicSsl from '@vitejs/plugin-basic-ssl'
+import type { ProxyOptions } from 'vite'
 
 const DOMAIN = process.env.VITE_DOMAIN || 'localhost'
 
-const createProxyConfig = (target: string, host: string) => ({
+const createProxyConfig = (target: string, host: string): ProxyOptions => ({
   target,
   changeOrigin: true,
   cookieDomainRewrite: DOMAIN,
   headers: { Host: host },
   followRedirects: false,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   configure: (proxy: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     proxy.on('proxyReq', (proxyReq: any) => {
       proxyReq.setHeader('Origin', target)
     })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     proxy.on('proxyRes', (proxyRes: any) => {
       if (proxyRes.statusCode === 302 && proxyRes.headers.location) {
         let location = proxyRes.headers.location

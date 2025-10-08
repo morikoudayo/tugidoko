@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     initializeUser();
-  }, []);
+  }, [firebaseUser]);
 
   /**
   * IDとパスワードが有効かチェックし、AuthContextに保存。
