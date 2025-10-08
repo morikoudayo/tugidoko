@@ -6,7 +6,7 @@
 >>>>>>> Stashed changes
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
-![Badge](https://img.shields.io/badge/Image%20Digest-0d5bb97-green?logo=docker)
+![Badge](https://img.shields.io/badge/Image%20Digest-1c91a91-green?logo=docker)
 <!-- /DEPLOY_DIGEST -->
 <!-- SECURITY_CHECK -->
 ![Badge](https://img.shields.io/badge/Security%20Check-success-green?logo=socket)
