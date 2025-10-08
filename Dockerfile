@@ -5,7 +5,12 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci
 
-COPY . .
+COPY src/ ./src/
+COPY public/ ./public/
+COPY index.html ./
+COPY tsconfig*.json ./
+COPY vite.config.ts ./
+
 RUN npm run build
 
 FROM cgr.dev/chainguard/nginx:latest
