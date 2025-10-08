@@ -1,12 +1,14 @@
+<p>
 <!-- DEPLOY_COMMIT -->
-![Badge](https://img.shields.io/badge/Commit-657a3ed-blue?logo=github)
+<img src="https://img.shields.io/badge/Commit-657a3ed-blue?logo=github" alt="Badge">
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
-![Badge](https://img.shields.io/badge/Image%20Digest-1c91a91-green?logo=docker)
+<img src="https://img.shields.io/badge/Image%20Digest-1c91a91-green?logo=docker" alt="Badge">
 <!-- /DEPLOY_DIGEST -->
 <!-- SECURITY_CHECK -->
-![Badge](https://img.shields.io/badge/Security%20Check-success-green?logo=socket)
+<img src="https://img.shields.io/badge/Security%20Check-success-green?logo=socket" alt="Badge">
 <!-- /SECURITY_CHECK -->
+</p>
 
 # 神奈川大学の学生向け授業・欠席情報一括表示Webアプリ「つぎどこ」
 
