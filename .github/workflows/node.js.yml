@@ -87,7 +87,7 @@ jobs:
 
     - name: Update security badge
       run: |
-        perl -i -pe 'BEGIN{undef $/;} s|<!-- SECURITY_CHECK -->.*?<!-- /SECURITY_CHECK -->|<!-- SECURITY_CHECK -->\n![Badge](https://img.shields.io/badge/Security%20Check-${{ steps.security-status.outputs.message }}-${{ steps.security-status.outputs.color }}?logo=socket)\n<!-- /SECURITY_CHECK -->|gs' README.md
+        perl -i -pe 'BEGIN{undef $/;} s|<!-- SECURITY_CHECK -->.*?<!-- /SECURITY_CHECK -->|<!-- SECURITY_CHECK -->\n<img src="https://img.shields.io/badge/Security%20Check-${{ steps.security-status.outputs.message }}-${{ steps.security-status.outputs.color }}?logo=socket" alt="Badge">\n<!-- /SECURITY_CHECK -->|gs' README.md
 
     - name: Commit security badge update
       run: |

@@ -52,7 +52,7 @@ jobs:
 
       - name: 'Update README'
         run: |-
-          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n![Badge](https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_short }}-green?logo=docker)\n<!-- /DEPLOY_DIGEST -->|gs' README.md
+          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n<img src="https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_short }}-blue?logo=docker" alt="Badge">\n<!-- /DEPLOY_DIGEST -->|gs' README.md
 
       - name: 'Commit changes'
         run: |-

@@ -115,7 +115,7 @@ jobs:
       - name: 'Update README with commit info'
         run: |-
           # Update README with commit info
-          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_COMMIT -->.*?<!-- /DEPLOY_COMMIT -->|<!-- DEPLOY_COMMIT -->\n![Badge](https://img.shields.io/badge/Commit-${{ steps.commit-info.outputs.commit_short }}-blue?logo=github)\n<!-- /DEPLOY_COMMIT -->|gs' README.md
+          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_COMMIT -->.*?<!-- /DEPLOY_COMMIT -->|<!-- DEPLOY_COMMIT -->\n<img src="https://img.shields.io/badge/Commit-${{ steps.commit-info.outputs.commit_short }}-blue?logo=github" alt="Badge">\n<!-- /DEPLOY_COMMIT -->|gs' README.md
 
       - name: 'Commit README changes'
         run: |-
