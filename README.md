@@ -2,7 +2,7 @@
 ![Badge](https://img.shields.io/badge/Image%20Name-nginx--app:e0e524f6f55e1f29a5ddbb3541c3aef83ea5c7d7-blue?logo=docker)
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
-![Badge](https://img.shields.io/badge/Image%20Digest-0d5bb979d89e0e07685fc93ee6fcc450a3e7abc6b34a568506a68ec4e2c3d843-green?logo=docker)
+![Badge](https://img.shields.io/badge/Image%20Digest-0d5bb97-green?logo=docker)
 <!-- /DEPLOY_DIGEST -->
 <!-- SECURITY_CHECK -->
 ![Badge](https://img.shields.io/badge/Security%20Check-success-green?logo=shield)
