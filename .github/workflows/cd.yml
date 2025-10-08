@@ -27,7 +27,7 @@
 #
 # 3. Change the values in the "env" block to match your values.
 
-name: 'Build and Deploy to Cloud Run'
+name: 'cd'
 
 on:
   push:
@@ -41,7 +41,7 @@ env:
   WORKLOAD_IDENTITY_PROVIDER: 'projects/109380428695/locations/global/workloadIdentityPools/github-pool/providers/github-provider' # TODO: update to your workload identity provider
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: 'ubuntu-latest'
     if: "!contains(github.event.head_commit.message, '[skip cd]') && !contains(github.event.head_commit.message, '[skip ci cd]')"
 
