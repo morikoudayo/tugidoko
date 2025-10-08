@@ -1,0 +1,95 @@
+name: 'Chainguard Image Update Check'
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: 'tugidoko-dev'
+  REGION: 'asia-northeast1'
+  SERVICE: 'nginx-app'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/109380428695/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+
+jobs:
+  check-image-update:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332'
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2'
+        with:
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@f0990588f1e5b5af6827153b93673613abdc6ec7'
+
+      - name: 'Check for Chainguard nginx image update'
+        id: 'check-update'
+        run: |-
+          CURRENT_IMAGE=$(gcloud run services describe "${{ env.SERVICE }}" \
+            --region="${{ env.REGION }}" \
+            --project="${{ env.PROJECT_ID }}" \
+            --format='value(spec.template.spec.containers[0].image)')
+          
+          echo "Current deployed image: ${CURRENT_IMAGE}"
+          
+          LATEST_CHAINGUARD_DIGEST=$(docker manifest inspect cgr.dev/chainguard/nginx:latest | jq -r '.schemaVersion')
+          
+          docker pull cgr.dev/chainguard/nginx:latest
+          LATEST_CHAINGUARD_DIGEST=$(docker inspect cgr.dev/chainguard/nginx:latest --format='{{.RepoDigests}}' | grep -o 'sha256:[a-f0-9]*' | head -1)
+          echo "Latest Chainguard digest: ${LATEST_CHAINGUARD_DIGEST}"
+          
+          if [ -f .chainguard-nginx-digest ]; then
+            STORED_DIGEST=$(cat .chainguard-nginx-digest)
+            echo "Stored digest: ${STORED_DIGEST}"
+            
+            if [ "${LATEST_CHAINGUARD_DIGEST}" != "${STORED_DIGEST}" ]; then
+              echo "Image update detected!"
+              echo "update_needed=true" >> $GITHUB_OUTPUT
+            else
+              echo "No update needed"
+              echo "update_needed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "No stored digest found, assuming update needed"
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "${LATEST_CHAINGUARD_DIGEST}" > .chainguard-nginx-digest
+          echo "latest_digest=${LATEST_CHAINGUARD_DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: 'Commit digest file'
+        if: steps.check-update.outputs.update_needed == 'true'
+        run: |-
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .chainguard-nginx-digest
+          git commit -m "chore: update chainguard nginx digest [skip ci]" || true
+          git push || true
+
+      - name: 'Trigger rebuild if update needed'
+        if: steps.check-update.outputs.update_needed == 'true'
+        run: |-
+          git commit --allow-empty -m "chore: trigger rebuild for chainguard nginx update
+
+          Chainguard nginx image updated to: ${{ steps.check-update.outputs.latest_digest }}
+          
+          [rebuild]"
+          git push
+
+      - name: 'Log result'
+        run: |-
+          echo "Update needed: ${{ steps.check-update.outputs.update_needed }}"
+          if [ "${{ steps.check-update.outputs.update_needed }}" == "true" ]; then
+            echo "Triggered rebuild due to Chainguard nginx image update"
+          else
+            echo "No rebuild needed, Chainguard nginx image is up to date"
+          fi
