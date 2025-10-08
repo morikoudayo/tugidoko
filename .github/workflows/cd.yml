@@ -157,7 +157,7 @@ jobs:
         if: steps.check-deploy-needed.outputs.deploy-needed == 'true'
         run: |-
           perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_COMMIT -->.*?<!-- /DEPLOY_COMMIT -->|<!-- DEPLOY_COMMIT -->\n<img src="https://img.shields.io/badge/Commit-${{ steps.commit-info.outputs.commit_short }}-blue?logo=github" alt="Badge">\n<!-- /DEPLOY_COMMIT -->|gs' README.md
-          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n<img src="https://img.shields.io/badge/Image%20Digest-${{ steps.check-deploy-needed.outputs.current_digest_short }}-blue?logo=docker" alt="Badge">\n<!-- /DEPLOY_DIGEST -->|gs' README.md
+          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n<img src="https://img.shields.io/badge/Image%20Digest-${{ steps.check-deploy-needed.outputs.current_digest_short }}-green?logo=docker" alt="Badge">\n<!-- /DEPLOY_DIGEST -->|gs' README.md
 
       - name: 'Commit README and digest changes'
         if: steps.check-deploy-needed.outputs.deploy-needed == 'true'
