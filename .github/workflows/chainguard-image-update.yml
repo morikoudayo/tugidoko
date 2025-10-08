@@ -36,17 +36,7 @@ jobs:
       - name: 'Check for Chainguard nginx image update'
         id: 'check-update'
         run: |-
-          CURRENT_IMAGE=$(gcloud run services describe "${{ env.SERVICE }}" \
-            --region="${{ env.REGION }}" \
-            --project="${{ env.PROJECT_ID }}" \
-            --format='value(spec.template.spec.containers[0].image)')
-          
-          echo "Current deployed image: ${CURRENT_IMAGE}"
-          
-          LATEST_CHAINGUARD_DIGEST=$(docker manifest inspect cgr.dev/chainguard/nginx:latest | jq -r '.schemaVersion')
-          
-          docker pull cgr.dev/chainguard/nginx:latest
-          LATEST_CHAINGUARD_DIGEST=$(docker inspect cgr.dev/chainguard/nginx:latest --format='{{.RepoDigests}}' | grep -o 'sha256:[a-f0-9]*' | head -1)
+          LATEST_CHAINGUARD_DIGEST=$(docker manifest inspect cgr.dev/chainguard/nginx:latest | jq -r '.config.digest')
           echo "Latest Chainguard digest: ${LATEST_CHAINGUARD_DIGEST}"
           
           if [ -f .chainguard-nginx-digest ]; then
@@ -71,16 +61,8 @@ jobs:
       - name: 'Commit digest file'
         if: steps.check-update.outputs.update_needed == 'true'
         run: |-
-          git config user.name github-actions
-          git config user.email github-actions@github.com
           git add .chainguard-nginx-digest
-          git commit -m "chore: update chainguard nginx digest [skip ci]" || true
-          git push || true
-
-      - name: 'Trigger rebuild if update needed'
-        if: steps.check-update.outputs.update_needed == 'true'
-        run: |-
-          git commit --allow-empty -m "chore: trigger rebuild for chainguard nginx update"
+          git commit -m "chore: update chainguard nginx digest"
           git push
 
       - name: 'Log result'
