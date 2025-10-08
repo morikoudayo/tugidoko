@@ -3,7 +3,7 @@
 <img src="https://img.shields.io/badge/Commit-0c6b0fd-blue?logo=github" alt="Badge">
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
-<img src="https://img.shields.io/badge/Image%20Digest-1e0775a-blue?logo=docker" alt="Badge">
+<img src="https://img.shields.io/badge/Image%20Digest-1e0775a-green?logo=docker" alt="Badge">
 <!-- /DEPLOY_DIGEST -->
 <!-- SECURITY_CHECK -->
 <img src="https://img.shields.io/badge/Security%20Check-success-green?logo=socket" alt="Badge">
