@@ -22,4 +22,11 @@ export default tseslint.config([
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/components/ui/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

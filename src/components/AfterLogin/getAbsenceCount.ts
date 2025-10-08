@@ -5,13 +5,8 @@ export type AbsenceCounts = Map<string, number>;
 /**
  * 授業の欠席回数を学内ポータルから取得しschedule内の各ClassDataのabsenceCountに代入する。
  */
-export async function getAbsenceCounts(test: boolean = false): Promise<AbsenceCounts> {
-  let response: Response
-  if (test) {
-    response = await fetch('/absence.html')
-  } else {
-    response = await fetch('/campusweb/campussquare.do?_flowId=AAW0001000-flow&link=menu-link-mf-135117')
-  }
+export async function getAbsenceCounts(): Promise<AbsenceCounts> {
+  const response = await fetch('/campusweb/campussquare.do?_flowId=AAW0001000-flow&link=menu-link-mf-135117')
 
   const html = await response.text()
 
