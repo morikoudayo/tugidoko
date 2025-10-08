@@ -1,6 +1,6 @@
 <p>
 <!-- DEPLOY_COMMIT -->
-<img src="https://img.shields.io/badge/Commit-c98296e-blue?logo=github" alt="Badge">
+<img src="https://img.shields.io/badge/Commit-65933f8-blue?logo=github" alt="Badge">
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
 <img src="https://img.shields.io/badge/Image%20Digest-09d35f1-blue?logo=docker" alt="Badge">
