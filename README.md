@@ -5,7 +5,7 @@
 ![Badge](https://img.shields.io/badge/Image%20Digest-0d5bb97-green?logo=docker)
 <!-- /DEPLOY_DIGEST -->
 <!-- SECURITY_CHECK -->
-![Badge](https://img.shields.io/badge/Security%20Check-success-green?logo=shield)
+![Badge](https://img.shields.io/badge/Security%20Check-success-green?logo=socket)
 <!-- /SECURITY_CHECK -->
 
 # 神奈川大学の学生向け授業・欠席情報一括表示Webアプリ「つぎどこ」
