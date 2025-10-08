@@ -27,7 +27,7 @@
 #
 # 3. Change the values in the "env" block to match your values.
 
-name: 'cd'
+name: 'CD'
 
 on:
   push:
@@ -42,6 +42,7 @@ env:
 
 jobs:
   build-and-deploy:
+    name: Build and Deploy to Cloud Run
     runs-on: 'ubuntu-latest'
     if: "!contains(github.event.head_commit.message, '[skip cd]') && !contains(github.event.head_commit.message, '[skip ci cd]')"
 
