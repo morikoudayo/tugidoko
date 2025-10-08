@@ -36,7 +36,8 @@ jobs:
       - name: 'Check for Chainguard nginx image update'
         id: 'check-update'
         run: |-
-          LATEST_CHAINGUARD_DIGEST=$(docker manifest inspect cgr.dev/chainguard/nginx:latest | jq -r '.config.digest')
+          docker pull cgr.dev/chainguard/nginx:latest
+          LATEST_CHAINGUARD_DIGEST=$(docker inspect cgr.dev/chainguard/nginx:latest --format='{{.RepoDigests}}' | grep -o 'sha256:[a-f0-9]*' | head -1)
           echo "Latest Chainguard digest: ${LATEST_CHAINGUARD_DIGEST}"
           
           if [ -f .chainguard-nginx-digest ]; then
