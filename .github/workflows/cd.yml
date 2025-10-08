@@ -77,6 +77,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: 'Build and Push Container'
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -85,7 +86,44 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
+
+      - name: 'Check if deployment is needed'
+        id: check-deploy-needed
+        run: |
+          CURRENT_DIGEST="${{ steps.build.outputs.digest }}"
+          echo "Current build digest: $CURRENT_DIGEST"
+          
+          if [ -z "$CURRENT_DIGEST" ]; then
+            echo "deploy-needed=false" >> $GITHUB_OUTPUT
+            echo "❌ No digest output (cache hit) - skipping deployment"
+            echo "current_digest_short=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          DIGEST_FILE=".nginx-app-digest"
+          if [ -f "$DIGEST_FILE" ]; then
+            PREVIOUS_DIGEST=$(cat "$DIGEST_FILE")
+            echo "Previous digest: $PREVIOUS_DIGEST"
+          else
+            PREVIOUS_DIGEST=""
+            echo "No previous digest file found"
+          fi
+          
+          if [ "$CURRENT_DIGEST" != "$PREVIOUS_DIGEST" ] || [ -z "$PREVIOUS_DIGEST" ]; then
+            echo "deploy-needed=true" >> $GITHUB_OUTPUT
+            echo "✅ Image digest changed - proceeding with deployment"
+            
+            echo "$CURRENT_DIGEST" > "$DIGEST_FILE"
+
+            CURRENT_DIGEST_SHORT=$(echo "${CURRENT_DIGEST}" | sed 's/^sha256://' | cut -c1-7)
+            echo "current_digest_short=${CURRENT_DIGEST_SHORT}" >> $GITHUB_OUTPUT
+          else
+            echo "deploy-needed=false" >> $GITHUB_OUTPUT
+            echo "❌ Image digest unchanged (cache hit) - skipping deployment"
+          fi
+
       - name: 'Deploy to Cloud Run'
+        if: steps.check-deploy-needed.outputs.deploy-needed == 'true'
 
         # END - Docker auth and build
 
@@ -99,11 +137,13 @@ jobs:
           image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }}'
       # If required, use the Cloud Run URL output in later steps
       - name: 'Show output'
+        if: steps.check-deploy-needed.outputs.deploy-needed == 'true'
         run: |2-
 
           echo ${{ steps.deploy.outputs.url }}
 
       - name: 'Get commit info'
+        if: steps.check-deploy-needed.outputs.deploy-needed == 'true'
         id: 'commit-info'
         run: |-
           # Extract first 7 characters of commit hash for badge display
@@ -112,18 +152,20 @@ jobs:
           
           echo "Full commit hash: ${{ github.sha }}"
 
-      - name: 'Update README with commit info'
+      - name: 'Update README with commit and image info'
+        if: steps.check-deploy-needed.outputs.deploy-needed == 'true'
         run: |-
-          # Update README with commit info
           perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_COMMIT -->.*?<!-- /DEPLOY_COMMIT -->|<!-- DEPLOY_COMMIT -->\n<img src="https://img.shields.io/badge/Commit-${{ steps.commit-info.outputs.commit_short }}-blue?logo=github" alt="Badge">\n<!-- /DEPLOY_COMMIT -->|gs' README.md
+          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n<img src="https://img.shields.io/badge/Image%20Digest-${{ steps.check-deploy-needed.outputs.current_digest_short }}-blue?logo=docker" alt="Badge">\n<!-- /DEPLOY_DIGEST -->|gs' README.md
 
-      - name: 'Commit README changes'
+      - name: 'Commit README and digest changes'
+        if: steps.check-deploy-needed.outputs.deploy-needed == 'true'
         run: |-
           git config user.name github-actions
           git config user.email github-actions@github.com
           git stash
           git pull --rebase origin main
-          git stash pop || git checkout --ours README.md
-          git add README.md
+          git stash pop || git checkout --ours README.md .nginx-app-digest
+          git add README.md .nginx-app-digest 
           git diff --quiet && git diff --staged --quiet || \
-            (git commit -m "chore: update commit info [skip ci cd]" && git push)
+            (git commit -m "chore: update commit and deployment info [skip ci cd]" && git push)
