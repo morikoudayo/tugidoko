@@ -1,9 +1,12 @@
+# syntax=docker/dockerfile:1
 FROM node:24-bookworm AS builder
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN npm ci
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 COPY src/ ./src/
 COPY public/ ./public/
