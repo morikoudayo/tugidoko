@@ -64,6 +64,9 @@ jobs:
         run: |-
           git config user.name "Koutarou Mori"
           git config user.email "m.koutarou2004@gmail.com"
+          git stash
+          git pull --rebase origin main
+          git stash pop || git checkout --ours .chainguard-nginx-digest
           git add .chainguard-nginx-digest
           git commit -m "chore: update chainguard nginx digest"
           git push
