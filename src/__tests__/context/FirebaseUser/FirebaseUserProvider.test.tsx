@@ -35,6 +35,7 @@ const TestComponent = () => {
 describe('FirebaseUserProvider', () => {
   const mockOnAuthStateChanged = vi.fn()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let FirebaseUserProvider: any
 
   beforeEach(async () => {
