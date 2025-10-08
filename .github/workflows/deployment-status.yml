@@ -50,9 +50,33 @@ jobs:
           
           echo "Full digest: ${DIGEST}"
 
+      - name: 'Compare with local digest'
+        id: 'compare-digest'
+        run: |-
+          CLOUD_RUN_DIGEST="${{ steps.image-info.outputs.digest }}"
+          DIGEST_FILE=".nginx-app-digest"
+          
+          echo "Cloud Run digest: ${CLOUD_RUN_DIGEST}"
+          
+          if [ -f "$DIGEST_FILE" ]; then
+            LOCAL_DIGEST=$(cat "$DIGEST_FILE")
+            echo "Local digest: ${LOCAL_DIGEST}"
+            
+            if [ "$CLOUD_RUN_DIGEST" = "$LOCAL_DIGEST" ]; then
+              echo "color=green" >> $GITHUB_OUTPUT
+              echo "✅ Digests match - deployment is in sync"
+            else
+              echo "color=red" >> $GITHUB_OUTPUT
+              echo "❌ Digests don't match - deployment is out of sync"
+            fi
+          else
+            echo "color=yellow" >> $GITHUB_OUTPUT
+            echo "⚠️ Local digest file not found"
+          fi
+
       - name: 'Update README'
         run: |-
-          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n<img src="https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_short }}-blue?logo=docker" alt="Badge">\n<!-- /DEPLOY_DIGEST -->|gs' README.md
+          perl -i -pe 'BEGIN{undef $/;} s|<!-- DEPLOY_DIGEST -->.*?<!-- /DEPLOY_DIGEST -->|<!-- DEPLOY_DIGEST -->\n<img src="https://img.shields.io/badge/Image%20Digest-${{ steps.image-info.outputs.digest_short }}-${{ steps.compare-digest.outputs.color }}?logo=docker" alt="Badge">\n<!-- /DEPLOY_DIGEST -->|gs' README.md
 
       - name: 'Commit changes'
         run: |-
