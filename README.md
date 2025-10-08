@@ -1,9 +1,5 @@
 <!-- DEPLOY_COMMIT -->
-<<<<<<< Updated upstream
-![Badge](https://img.shields.io/badge/Commit-0824936-blue?logo=github)
-=======
 ![Badge](https://img.shields.io/badge/Commit-657a3ed-blue?logo=github)
->>>>>>> Stashed changes
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
 ![Badge](https://img.shields.io/badge/Image%20Digest-1c91a91-green?logo=docker)
