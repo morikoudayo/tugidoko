@@ -25,14 +25,9 @@ function extractClassDataContent(classElement: Element): string {
 }
 
 /**
- * スケジュール情報を学内ポータルから取得してパースする
+ * HTMLドキュメントからスケジュール情報をパースする
  */
-export async function getSchedule(): Promise<Schedule> {
-  const response = await fetch('/campusweb/portal.do?page=main')
-
-  const html = await response.text()
-
-  const document = parseHTML(html);
+export function parseSchedule(document: Document): Schedule {
   const classElements = document.querySelectorAll('ul.mysch-portlet-list li');
 
   const schedule: Schedule = new Map([[NO_MORE_CLASSES, {} as ClassData]]);
@@ -75,4 +70,15 @@ export async function getSchedule(): Promise<Schedule> {
   });
 
   return schedule
+}
+
+/**
+ * スケジュール情報を学内ポータルから取得してパースする
+ */
+export async function getSchedule(): Promise<Schedule> {
+  const response = await fetch('/campusweb/portal.do?page=main')
+  const html = await response.text()
+  const document = parseHTML(html);
+  
+  return parseSchedule(document);
 }
