@@ -16,16 +16,16 @@ vi.mock('@/components/AfterLogin/hooks/useNextClass')
 
 // Mock Chakra UI components
 vi.mock('@chakra-ui/react', () => ({
-  Button: ({ children, onClick }: any) => (
+  Button: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
     <button onClick={onClick}>{children}</button>
   ),
-  Center: ({ children }: any) => (
+  Center: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
-  Heading: ({ children }: any) => <div>{children}</div>,
+  Heading: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   Spinner: () => <div data-testid="spinner">Loading...</div>,
-  Text: ({ children }: any) => <div>{children}</div>,
-  VStack: ({ children }: any) => <div>{children}</div>,
+  Text: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  VStack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
 
