@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332'
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -80,8 +82,8 @@ jobs:
 
       - name: 'Commit changes'
         run: |-
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git stash
           git pull --rebase origin main
           git stash pop || git checkout --ours README.md
