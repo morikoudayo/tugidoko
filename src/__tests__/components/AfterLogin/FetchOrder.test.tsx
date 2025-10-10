@@ -4,6 +4,7 @@ import { AfterLogin } from '@/components/AfterLogin/AfterLogin'
 import { AuthContext } from '@/context/Auth/AuthContext'
 import { FirebaseUserContext } from '@/context/FirebaseUser/FirebaseUserContext'
 import type { ReactNode } from 'react'
+import React from 'react'
 
 let fetchCallOrder: Array<{ url: string; timestamp: number }> = []
 
@@ -62,8 +63,8 @@ const mockFetch = vi.fn().mockImplementation(async (url: string, options?: Reque
 global.fetch = mockFetch
 
 vi.mock('@chakra-ui/react', () => ({
-  Button: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
-  Center: ({ children }: any) => <div>{children}</div>,
+  Button: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => <button onClick={onClick}>{children}</button>,
+  Center: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
 vi.mock('@/components/AfterLogin/hooks/usePeriodicUpdate', () => ({
