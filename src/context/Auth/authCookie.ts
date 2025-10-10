@@ -19,7 +19,8 @@ export async function activateSession(userCredentials: User): Promise<boolean> {
     })
   })
 
-  const sessionActivationPromise = fetch('/campusweb/portal.do?page=main');
+  const controller = new AbortController();
+  const sessionActivationPromise = fetch('/campusweb/portal.do?page=main', { signal: controller.signal });
 
   const html = await response.text();
 
@@ -28,6 +29,7 @@ export async function activateSession(userCredentials: User): Promise<boolean> {
     const title = match[1];
     if (title.includes('Please Wait While Redirecting to console')) {
       const sessionActivationResponse = await sessionActivationPromise
+      controller.abort();
       if (sessionActivationResponse.ok) {
         return true;
       }
