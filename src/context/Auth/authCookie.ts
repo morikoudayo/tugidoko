@@ -19,13 +19,18 @@ export async function activateSession(userCredentials: User): Promise<boolean> {
     })
   })
 
+  const sessionActivationPromise = fetch('/campusweb/portal.do?page=main');
+
   const html = await response.text();
 
   const match = html.match(/<title>(.*?)<\/title>/i);
   if (match) {
     const title = match[1];
     if (title.includes('Please Wait While Redirecting to console')) {
-      return true;
+      const sessionActivationResponse = await sessionActivationPromise
+      if (sessionActivationResponse.ok) {
+        return true;
+      }
     }
   }
 
