@@ -62,8 +62,8 @@ jobs:
       - name: 'Commit digest file'
         if: steps.check-update.outputs.update_needed == 'true'
         run: |-
-          git config user.name "Koutarou Mori"
-          git config user.email "m.koutarou2004@gmail.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git stash
           git pull --rebase origin main
           git stash pop || git checkout --ours .chainguard-nginx-digest
