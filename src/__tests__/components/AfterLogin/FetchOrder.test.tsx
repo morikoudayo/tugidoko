@@ -9,6 +9,7 @@ import React from 'react'
 let fetchCallOrder: Array<{ url: string; timestamp: number }> = []
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+// @ts-ignore: options parameter is required for fetch signature compatibility
 const mockFetch = vi.fn().mockImplementation(async (url: string, options?: RequestInit) => {
   try {
     if (url.includes('/amserver/UI/Login')) {
