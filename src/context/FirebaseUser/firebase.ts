@@ -5,9 +5,11 @@ import { getAuth } from "firebase/auth";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
+const currentDomain = window.location.host;
+
 const firebaseConfig = {
   apiKey: "AIzaSyAhwsddG4Vf4BIhusV9N1aDj10XF9HVmuM",
-  authDomain: "tugidoko.snowi.ng",
+  authDomain: currentDomain,
   projectId: "tugidoko-dev",
   storageBucket: "tugidoko-dev.firebasestorage.app",
   messagingSenderId: "109380428695",
