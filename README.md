@@ -1,9 +1,9 @@
 <p>
 <!-- DEPLOY_COMMIT -->
-<img src="https://img.shields.io/badge/Commit-aba1725-blue?logo=github" alt="Badge">
+<img src="https://img.shields.io/badge/Commit-e3efb03-blue?logo=github" alt="Badge">
 <!-- /DEPLOY_COMMIT -->
 <!-- DEPLOY_DIGEST -->
-<img src="https://img.shields.io/badge/Image%20Digest-2b4dec6-green?logo=docker" alt="Badge">
+<img src="https://img.shields.io/badge/Image%20Digest-f06234a-green?logo=docker" alt="Badge">
 <!-- /DEPLOY_DIGEST -->
 <!-- SECURITY_CHECK -->
 <img src="https://img.shields.io/badge/Security%20Check-success-green?logo=socket" alt="Badge">
